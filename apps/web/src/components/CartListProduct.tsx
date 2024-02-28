@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { RiDeleteBinLine } from 'react-icons/ri';
 
-export const CartProduct = () => {
+export const CartListProduct = () => {
   return (
     <div className="flex w-full max-h-28 min-h-28">
       <div className="flex w-1/4 pr-2 pt-0 pl-0">
@@ -24,11 +24,11 @@ export const CartProduct = () => {
           </button>
         </div>
       </div>
-      <div className="flex flex-col w-1/4 h-full items-end">
-        <div className="h-1/3">
+      <div className="flex flex-col w-1/4 items-end justify-between">
+        <div>
           <RiDeleteBinLine className="h-6 w-6 cursor-pointer" />
         </div>
-        <div className=" flex h-2/3 items-end font-semibold">
+        <div className="font-semibold">
           <p>Rp.20.000</p>
         </div>
       </div>

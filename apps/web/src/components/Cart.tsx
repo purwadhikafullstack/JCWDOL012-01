@@ -7,13 +7,13 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { TiShoppingCart } from 'react-icons/ti';
-import { CartProduct } from './CartProduct';
+import { CartListProduct } from './CartListProduct';
 import { CartCheckout } from './CartCheckout';
 import { useState } from 'react';
 import { AuthModal } from './AuthModal';
 
 export const Cart = () => {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const handleSheetTrigger = () => {
@@ -44,7 +44,8 @@ export const Cart = () => {
           </SheetHeader>
           <div className="flex flex-col mt-2">
             <div className="flex flex-col gap-2">
-              <CartProduct />
+              <CartListProduct />
+              <CartListProduct />
             </div>
           </div>
           <CartCheckout />

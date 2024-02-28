@@ -1,3 +1,12 @@
+import { Header } from '@/components/Header';
+import LocationComponent from '@/components/LocationComponent';
+
 export default function Home() {
-  return <div>ISI KONTEN</div>;
+  return (
+    <div>
+      <Header />
+      <LocationComponent />
+      ISI KONTEN
+    </div>
+  );
 }
