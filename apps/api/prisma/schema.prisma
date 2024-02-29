@@ -19,3 +19,48 @@ model Sample {
 
   @@map("samples") // if you want to use snake_case format
 }
+
+model Store {
+  id               Int                @id @default(autoincrement())
+  // userId 
+  street           String
+  city             String
+  cityId           Int
+  latitude         Decimal
+  longitude      Decimal
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  ProductInventory ProductInventory[]
+}
+
+model Product {
+  id                Int                @id @default(autoincrement())
+  name              String             @unique
+  description       String
+  productCategory   ProductCategory?   @relation(fields: [productCategoryId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  productCategoryId Int?
+  // image[] 
+  price             Int
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  ProductInventory  ProductInventory[]
+}
+
+model ProductInventory {
+  id        Int      @id @default(autoincrement())
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  storeId   Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId Int
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductCategory {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Product   Product[]
+}
