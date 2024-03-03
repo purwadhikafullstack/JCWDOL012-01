@@ -5,15 +5,16 @@ export class CartController {
   async getCountCart(req: Request, res: Response) {
     const dataUser = req.dataUser;
     try {
-      let count = await prisma.cart.findMany({
+      const cartItems = await prisma.cart.findMany({
         where: { user_id: dataUser.id },
       });
 
-      if (count.length === 0) {
-        return res.status(200).json({ cart: 0 });
+      let totalQuantity = 0;
+      for (const item of cartItems) {
+        totalQuantity += item.quantity;
       }
 
-      return res.status(200).send(count);
+      return res.status(200).json({ quantity: totalQuantity });
     } catch (error) {
       console.error('Error fetching cart:', error);
       return res.status(500).json({ error: 'Internal server error' });
@@ -71,7 +72,7 @@ export class CartController {
       });
 
       if (cart.length === 0) {
-        return res.status(400).json({ error: 'cart not found' });
+        return res.status(404).json({ quantity: 0 });
       }
 
       const cartWithProduct = [];
@@ -84,8 +85,9 @@ export class CartController {
           : null;
         cartWithProduct.push({
           ...item,
-          image: `${req.get('host')}/image/${firstImage}`,
+          image: `http://${req.get('host')}/image/${firstImage}`,
           price: product?.price,
+          name: product?.name,
         });
       }
 
@@ -124,7 +126,7 @@ export class CartController {
         where: { id: Number(cartId) },
       });
 
-      return res.status(204).send();
+      return res.status(204).send(deleteCart);
     } catch (error) {
       console.error('Error delete cart:', error);
       return res.status(500).json({ error: 'Internal Server error' });
