@@ -19,3 +19,30 @@ model Sample {
 
   @@map("samples") // if you want to use snake_case format
 }
+
+model Users {
+  id            Int       @id @default(autoincrement())
+  user_name     String    @unique
+  email         String    @unique
+  password      String
+  telephone     String
+  image         String
+  referral_code String
+  role          type_role
+  created_at    DateTime  @default(now())
+  update_at     DateTime  @updatedAt
+}
+
+enum type_role {
+  super_admin
+  store_admin
+  user
+}
+
+model user_address {
+  id           Int    @id @default(autoincrement())
+  user_id      Int
+  address_line String
+  city         String
+  country      String
+}
