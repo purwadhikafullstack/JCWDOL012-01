@@ -23,32 +23,6 @@ export default function CarouselImage() {
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true }),
   );
-
-  //   return (
-  //     <div className="w-full lg:max-w-5xl mx-auto">
-  //       <Carousel className="relative">
-  //         <CarouselContent>
-  //           {imageData.map((image, index) => (
-  //             <CarouselItem key={index}>
-  //               <div className="p-1">
-  //                 <Card>
-  //                   <CardContent className="w-max h-fit flex aspect-banner items-center justify-center p-6">
-  //                     <Image
-  //                       src={image.src}
-  //                       alt={image.alt}
-  //                       width={0}
-  //                       height={0}
-  //                     />
-  //                   </CardContent>
-  //                 </Card>
-  //               </div>
-  //             </CarouselItem>
-  //           ))}
-  //         </CarouselContent>
-  //       </Carousel>
-  //     </div>
-  //   );
-
   return (
     <Carousel
       plugins={[plugin.current]}

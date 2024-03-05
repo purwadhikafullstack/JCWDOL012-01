@@ -1,16 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
 import prisma from '@/prisma';
-import { genSalt, hash } from 'bcrypt';
+import { compare, genSalt, hash } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
 
 export class AuthController {
-  async signUp(req: Request, res: Response, next: NextFunction) {
+  async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const email = req.body.email;
+      const email: string = req.body.email;
       const user_name = req.body.user_name;
 
       // existing User for email
       const existingUser = await prisma.users.findUnique({
-        where: { email: req.body.email },
+        where: {
+          email: email,
+        },
       });
       // existing user condition
       if (existingUser) {
@@ -35,5 +38,50 @@ export class AuthController {
     } catch (error: any) {
       next(error);
     }
+  }
+
+  // login User
+  async loginUser(req: Request, res: Response) {
+    try {
+      const users = await prisma.users.findUniqueOrThrow({
+        where: { email: req.body.email },
+      });
+
+      // generate token
+      const jwtToken = sign(
+        {
+          id: users.id,
+          role: users.role,
+          email: users.email,
+        },
+        'secret123',
+      );
+
+      // for compare password from database and request body password
+      const isValidPassword = await compare(req.body.password, users.password);
+      // conditional password if variable isvalidpassword false
+      if (!isValidPassword) {
+        throw new Error('Invalid password');
+      }
+
+      // showing in thunder client, and token must showing in js-cookies
+      return res.status(201).send({
+        id: users.id,
+        user_name: users.user_name,
+        email: users.email,
+        token: jwtToken,
+      });
+    } catch (error: any) {
+      // response status error
+      return res.status(500).send({
+        status: false,
+        message: error.message,
+      });
+    }
+  }
+
+  async logoutUsers(req: Request, res: Response, next: NextFunction) {
+    try {
+    } catch (error) {}
   }
 }
