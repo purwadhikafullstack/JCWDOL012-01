@@ -15,7 +15,7 @@ const useDeleteCart = () => {
       }
       try {
         const res = await axios.delete(
-          `http://localhost:8000/cart/${cartId}/delete`,
+          `http://localhost:8000/api/cart/${cartId}/delete`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -13,7 +13,7 @@ const useGetCart = () => {
         return null;
       }
       try {
-        const res = await axios.get('http://localhost:8000/cart', {
+        const res = await axios.get('http://localhost:8000/api/cart', {
           headers: { Authorization: `Bearer ${token}` },
         });
 

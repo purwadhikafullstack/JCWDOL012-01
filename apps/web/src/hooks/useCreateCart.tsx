@@ -27,7 +27,7 @@ const useCreateCart = () => {
       }
       try {
         const res = await axios.post(
-          `http://localhost:8000/cart/create`,
+          `http://localhost:8000/api/cart/create`,
           {
             quantity,
             product_id: productId,
