@@ -99,8 +99,8 @@ model Product_inventory {
   quantity   Int
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  storeId    Store      @relation(fields: [store_id], references: [id])
-  productId  Product    @relation(fields: [product_id], references: [id])
+  store      Store      @relation(fields: [store_id], references: [id])
+  product    Product    @relation(fields: [product_id], references: [id])
   Stocklog   Stocklog[]
 }
 

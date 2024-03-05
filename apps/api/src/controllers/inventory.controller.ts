@@ -74,7 +74,7 @@ export class InventoryController {
         },
         select: {
           id: true,
-          productId: true,
+          product: true,
           quantity: true,
           createdAt: true,
           updatedAt: true,
@@ -107,7 +107,7 @@ export class InventoryController {
           product_id: Number(productId)
         },
         include: {
-          productId: true,
+          product: true,
         }
       });
 
