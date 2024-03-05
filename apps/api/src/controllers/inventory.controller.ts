@@ -1,7 +1,7 @@
 import prisma from "@/prisma";
 import { NextFunction, Request, Response } from "express";
 
-export class StoreController {
+export class InventoryController {
   async addStoreProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const {
@@ -27,18 +27,31 @@ export class StoreController {
         where: { id: productId }
       });
 
-      if (exisingProduct) {
-        return res.status(400).json({
+      if (!exisingProduct) {
+        return res.status(404).json({
           success: false,
-          message: 'Product already exist on this store'
+          message: 'Product not found'
         });
       }
 
-      const newStoreProduct = await prisma.productInventory.create({
+      const existingInventory = await prisma.product_inventory.findFirst({
+        where: {
+          product_id: productId
+        }
+      });
+
+      if (existingInventory) {
+        return res.status(400).json({
+          success: false,
+          message: 'Product already exist in this store'
+        });
+      }
+
+      const newStoreProduct = await prisma.product_inventory.create({
         data: {
-          storeId: Number(storeId),
-          productId,
-          quantity
+          store_id: Number(storeId),
+          product_id: productId,
+          quantity,
         }
       });
 
@@ -55,13 +68,13 @@ export class StoreController {
     try {
       const { storeId } = req.params;
 
-      const products = await prisma.productInventory.findMany({
+      const products = await prisma.product_inventory.findMany({
         where: {
-          storeId: Number(storeId)
+          store_id: Number(storeId)
         },
         select: {
           id: true,
-          product: true,
+          productId: true,
           quantity: true,
           createdAt: true,
           updatedAt: true,
@@ -88,13 +101,13 @@ export class StoreController {
     try {
       const { storeId, productId } = req.params;
 
-      const productInventory = await prisma.productInventory.findFirst({
+      const productInventory = await prisma.product_inventory.findFirst({
         where: {
-          storeId: Number(storeId),
-          productId: Number(productId)
+          store_id: Number(storeId),
+          product_id: Number(productId)
         },
         include: {
-          product: true,
+          productId: true,
         }
       });
 

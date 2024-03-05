@@ -10,57 +10,225 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  id                 Int           @id @default(autoincrement())
+  user_name          String        @unique
+  email              String        @unique
+  password           String?
+  telephone          String?
+  image              String?
+  refferal_code      String?
+  role               Role          @default(Customer)
+  email_verification Boolean       @default(false)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  User_Adress        User_Adress[]
+  store              Store[]
+  Cart               Cart[]
+  Orders             Orders[]
+}
 
-  @@map("samples") // if you want to use snake_case format
+enum Role {
+  Customer
+  Store_Admin
+  Super_Admin
+}
+
+model User_Adress {
+  id        Int        @id @default(autoincrement())
+  user_id   Int
+  street    String
+  city      String
+  cityId    Int
+  province  String
+  latitude  Decimal
+  longitude Decimal
+  isPrimary Boolean
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    User       @relation(fields: [user_id], references: [id])
+  Shipment  Shipment[]
 }
 
 model Store {
-  id               Int                @id @default(autoincrement())
-  // userId 
-  street           String
-  city             String
-  cityId           Int
-  latitude         Decimal
-  longitude      Decimal
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  ProductInventory ProductInventory[]
+  id                Int                 @id @default(autoincrement())
+  user_id           Int
+  street            String
+  city              String
+  province          String
+  cityId            Int
+  latitude          Decimal
+  longitude         Decimal
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  userId            User                @relation(fields: [user_id], references: [id])
+  Product_inventory Product_inventory[]
+  Voucher           Voucher[]
+  Order_Item        Order_Item[]
+  Shipment          Shipment[]
 }
 
 model Product {
-  id                Int                @id @default(autoincrement())
-  name              String             @unique
+  id                Int                 @id @default(autoincrement())
+  name              String              @unique
   description       String
-  productCategory   ProductCategory?   @relation(fields: [productCategoryId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  productCategoryId Int?
-  // image[] 
-  price             Int
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  ProductInventory  ProductInventory[]
+  category_id       Int
+  image             Json
+  price             Decimal
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  categoryId        Product_Category    @relation(fields: [category_id], references: [id])
+  Product_inventory Product_inventory[]
+  Voucher           Voucher[]
+  Cart              Cart[]
+  Order_Item        Order_Item[]
 }
 
-model ProductInventory {
-  id        Int      @id @default(autoincrement())
-  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  storeId   Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  productId Int
-  quantity  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ProductCategory {
+model Product_Category {
   id        Int       @id @default(autoincrement())
   name      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  Product   Product[]
+  product   Product[]
+}
+
+model Product_inventory {
+  id         Int        @id @default(autoincrement())
+  store_id   Int
+  product_id Int
+  quantity   Int
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  storeId    Store      @relation(fields: [store_id], references: [id])
+  productId  Product    @relation(fields: [product_id], references: [id])
+  Stocklog   Stocklog[]
+}
+
+model Stocklog {
+  id           Int               @id @default(autoincrement())
+  inventory_id Int
+  typeLog      StockLogType
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  inventoryId  Product_inventory @relation(fields: [inventory_id], references: [id])
+}
+
+enum StockLogType {
+  Addition
+  Reduction
+}
+
+model Voucher {
+  id           Int           @id @default(autoincrement())
+  voucher_code String
+  product_id   Int?
+  store_id     Int
+  type         Discount_Type
+  amount       Decimal
+  limit_usage  Int
+  expired_at   DateTime
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  storeId      Store         @relation(fields: [store_id], references: [id])
+  ProductId    Product?      @relation(fields: [product_id], references: [id])
+  Orders       Orders[]
+}
+
+enum Discount_Type {
+  Amount
+  Percentage
+}
+
+model Cart {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  userId     User     @relation(fields: [user_id], references: [id])
+  productId  Product  @relation(fields: [product_id], references: [id])
+}
+
+model Orders {
+  id          Int          @id @default(autoincrement())
+  user_id     Int
+  shipment_id Int
+  voucher_id  Int?
+  total       Decimal
+  status      Order_Status @default(pending)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  userId      User         @relation(fields: [user_id], references: [id])
+  voucherId   Voucher?     @relation(fields: [voucher_id], references: [id])
+  shipmentId  Shipment     @relation(fields: [shipment_id], references: [id])
+  Order_Item  Order_Item[]
+  Payment     Payment[]
+}
+
+model Order_Item {
+  id         Int      @id @default(autoincrement())
+  order_id   Int
+  product_id Int
+  store_id   Int
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  orderId    Orders   @relation(fields: [order_id], references: [id])
+  productId  Product  @relation(fields: [product_id], references: [id])
+  storeId    Store    @relation(fields: [store_id], references: [id])
+}
+
+model Shipment {
+  id         Int           @id @default(autoincrement())
+  address_id Int
+  store_id   Int
+  amount     Decimal
+  type       Shipment_Type
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  addressId  User_Adress   @relation(fields: [address_id], references: [id])
+  storeId    Store         @relation(fields: [store_id], references: [id])
+  Order      Orders[]
+}
+
+enum Shipment_Type {
+  OKE
+  REG
+  YES
+}
+
+model Payment {
+  id         Int            @id @default(autoincrement())
+  invoice    String         @unique
+  order_id   Int
+  total      Decimal
+  method     Payment_Method
+  status     Payment_Status
+  expired_at DateTime
+  shipped_at DateTime?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  orderId    Orders         @relation(fields: [order_id], references: [id])
+}
+
+enum Payment_Method {
+  Payment_Gateway
+  Manual_Transfer
+}
+
+enum Payment_Status {
+  pending
+  Confirmation
+  Confirmed
+  Cancelled
+}
+
+enum Order_Status {
+  pending
+  Confirmation
+  On_process
+  Shipped
+  Confirmed
+  Cancelled
 }

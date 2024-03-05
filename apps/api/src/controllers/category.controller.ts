@@ -4,9 +4,9 @@ import { NextFunction, Request, Response } from "express";
 export class CategoryController {
   async getAllCategories(req: Request, res: Response, next: NextFunction) {
     try {
-      const categories = await prisma.productCategory.findMany({
+      const categories = await prisma.product_Category.findMany({
         include: {
-          Product: true,
+          product: true,
         }
       });
 
@@ -23,7 +23,7 @@ export class CategoryController {
     try {
       const { name } = req.body;
 
-      const existingCategory = await prisma.productCategory.findUnique({
+      const existingCategory = await prisma.product_Category.findUnique({
         where: {
           name
         }
@@ -36,7 +36,7 @@ export class CategoryController {
         });
       }
 
-      const category = await prisma.productCategory.create({
+      const category = await prisma.product_Category.create({
         data: {
           name
         }
