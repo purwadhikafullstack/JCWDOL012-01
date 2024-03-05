@@ -1,12 +1,4 @@
 'use client';
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
 import { TiShoppingCart } from 'react-icons/ti';
 import { CartListProduct } from './CartListProduct';
 import { useEffect, useMemo, useState } from 'react';
@@ -16,6 +8,13 @@ import { BsCartX } from 'react-icons/bs';
 import { CheckoutButton } from './CheckoutButton';
 import { useCart } from '@/provider/CartProvider';
 import useGetCart from '@/hooks/useGetCart';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 export const CartButton = () => {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);

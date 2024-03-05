@@ -4,7 +4,7 @@ import { Navbar } from '@/components/Navbar';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
-const page = () => {
+const Page = () => {
   const { store, product } = useParams();
 
   useEffect;
@@ -23,4 +23,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

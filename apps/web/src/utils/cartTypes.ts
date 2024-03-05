@@ -26,6 +26,4 @@ export interface CartContextType {
   isError: boolean;
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
   refetchCart: () => void;
-  removeFromCart: (cartId: number) => void;
-  updateCart: (cartId: number, quantity: number) => void;
 }

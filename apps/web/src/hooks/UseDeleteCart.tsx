@@ -9,7 +9,7 @@ const useDeleteCart = () => {
 
   const { mutate, isPending } = useMutation({
     mutationKey: ['cart'],
-    mutationFn: async ({ cartId }: { cartId: number }) => {
+    mutationFn: async (cartId: number) => {
       if (!token) {
         throw new Error('Token is not available');
       }

@@ -10,32 +10,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("samples") // if you want to use snake_case format
-}
-
 model User {
-  id                 Int            @id @default(autoincrement())
-  user_name          String         @unique
-  email              String         @unique
+  id                 Int           @id @default(autoincrement())
+  user_name          String        @unique
+  email              String        @unique
   password           String?
   telephone          String?
   image              String?
   refferal_code      String?
-  role               Role           @default(Customer)
-  email_verification Boolean        @default(true)
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  role               Role          @default(Customer)
+  email_verification Boolean       @default(false)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
   User_Adress        User_Adress[]
   store              Store[]
   Cart               Cart[]
-  Order_Detail       Order_Detail[]
+  Orders             Orders[]
 }
 
 enum Role {
@@ -45,17 +35,19 @@ enum Role {
 }
 
 model User_Adress {
-  id         Int        @id @default(autoincrement())
-  user_id    Int
-  street     String
-  city       String
-  latitude   Decimal
-  longtitude Decimal
-  isPrimary  Boolean
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  userId     User       @relation(fields: [user_id], references: [id])
-  Shipment   Shipment[]
+  id        Int        @id @default(autoincrement())
+  user_id   Int
+  street    String
+  city      String
+  cityId    Int
+  province  String
+  latitude  Decimal
+  longitude Decimal
+  isPrimary Boolean
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    User       @relation(fields: [user_id], references: [id])
+  Shipment  Shipment[]
 }
 
 model Store {
@@ -125,7 +117,7 @@ enum StockLogType {
 }
 
 model Voucher {
-  id           Int            @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   voucher_code String
   product_id   Int?
   store_id     Int
@@ -133,11 +125,11 @@ model Voucher {
   amount       Decimal
   limit_usage  Int
   expired_at   DateTime
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  storeId      Store          @relation(fields: [store_id], references: [id])
-  ProductId    Product?       @relation(fields: [product_id], references: [id])
-  Order_Detail Order_Detail[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  storeId      Store         @relation(fields: [store_id], references: [id])
+  ProductId    Product?      @relation(fields: [product_id], references: [id])
+  Orders       Orders[]
 }
 
 enum Discount_Type {
@@ -156,12 +148,13 @@ model Cart {
   productId  Product  @relation(fields: [product_id], references: [id])
 }
 
-model Order_Detail {
+model Orders {
   id          Int          @id @default(autoincrement())
   user_id     Int
   shipment_id Int
   voucher_id  Int?
   total       Decimal
+  status      Order_Status @default(pending)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   userId      User         @relation(fields: [user_id], references: [id])
@@ -172,29 +165,29 @@ model Order_Detail {
 }
 
 model Order_Item {
-  id         Int          @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   order_id   Int
   product_id Int
   store_id   Int
   quantity   Int
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  orderId    Order_Detail @relation(fields: [order_id], references: [id])
-  productId  Product      @relation(fields: [product_id], references: [id])
-  storeId    Store        @relation(fields: [store_id], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  orderId    Orders   @relation(fields: [order_id], references: [id])
+  productId  Product  @relation(fields: [product_id], references: [id])
+  storeId    Store    @relation(fields: [store_id], references: [id])
 }
 
 model Shipment {
-  id           Int            @id @default(autoincrement())
-  address_id   Int
-  store_id     Int
-  amount       Decimal
-  type         Shipment_Type
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  addressId    User_Adress    @relation(fields: [address_id], references: [id])
-  storeId      Store          @relation(fields: [store_id], references: [id])
-  Order_Detail Order_Detail[]
+  id         Int           @id @default(autoincrement())
+  address_id Int
+  store_id   Int
+  amount     Decimal
+  type       Shipment_Type
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  addressId  User_Adress   @relation(fields: [address_id], references: [id])
+  storeId    Store         @relation(fields: [store_id], references: [id])
+  Order      Orders[]
 }
 
 enum Shipment_Type {
@@ -214,7 +207,7 @@ model Payment {
   shipped_at DateTime?
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
-  orderId    Order_Detail   @relation(fields: [order_id], references: [id])
+  orderId    Orders         @relation(fields: [order_id], references: [id])
 }
 
 enum Payment_Method {
@@ -223,6 +216,13 @@ enum Payment_Method {
 }
 
 enum Payment_Status {
+  pending
+  Confirmation
+  Confirmed
+  Cancelled
+}
+
+enum Order_Status {
   pending
   Confirmation
   On_process

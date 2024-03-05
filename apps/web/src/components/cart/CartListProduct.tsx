@@ -4,18 +4,20 @@ import { useCart } from '@/provider/CartProvider';
 import { CartItem } from '@/utils/cartTypes';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import ModalConfirmDelete from './ModalConfirmDelete';
 import { formatToRupiah } from '@/lib/formatToRupiah';
+import useDeleteCart from '@/hooks/UseDeleteCart';
 
 interface Props {
   cartItem: CartItem;
 }
 
 export const CartListProduct = ({ cartItem }: Props) => {
-  const { removeFromCart } = useCart();
+  const { setCart } = useCart();
   const { mutate, isPending } = useUpdateCart();
+  const { mutate: deleteCart, isPending: isDeletePending } = useDeleteCart();
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const handleDeleteCart = () => {
@@ -62,7 +64,7 @@ export const CartListProduct = ({ cartItem }: Props) => {
       <div className="flex flex-col w-1/4 items-end justify-between">
         <div>
           <button onClick={handleDeleteCart}>
-            <RiDeleteBinLine className="h-6 w-6 cursor-pointer" />
+            <RiDeleteBinLine className="h-6 w-6 cursor-pointer text-red-500" />
           </button>
         </div>
         <div className="font-semibold">
@@ -70,7 +72,12 @@ export const CartListProduct = ({ cartItem }: Props) => {
         </div>
         {confirmDelete && (
           <ModalConfirmDelete
-            onConfirm={() => removeFromCart(cartItem.id)}
+            onConfirm={() => {
+              deleteCart(cartItem.id);
+              setCart((prevCart) =>
+                prevCart.filter((cart) => cart.id !== cartItem.id),
+              );
+            }}
             onCancel={() => setConfirmDelete(false)}
           />
         )}

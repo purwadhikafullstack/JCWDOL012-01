@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const CheckoutTotal = () => {
   return (
     <div className="border p-5 flex flex-col gap-5 rounded-md bg-white">
