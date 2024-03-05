@@ -1,6 +1,4 @@
-'use client';
-
-import useProductDetails from "@/hooks/useProductDetails";
+import ProductDetails from '@/components/product/ProductDetails';
 
 type Props = {
   params: {
@@ -12,13 +10,9 @@ type Props = {
 export default function ProductDetailPage({
   params: { storeId, productId },
 }: Props) {
-  const {data, isError, isLoading, refetch} = useProductDetails({storeId, productId});
-  console.log(data)
-  
   return (
     <>
-      <p>storeId: {storeId}</p>
-      <p>productId: {productId}</p>
+      <ProductDetails storeId={storeId} productId={productId} />
     </>
   );
 }

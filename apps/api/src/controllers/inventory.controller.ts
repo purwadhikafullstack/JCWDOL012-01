@@ -108,6 +108,7 @@ export class InventoryController {
         },
         include: {
           product: true,
+          store: true,
         }
       });
 
