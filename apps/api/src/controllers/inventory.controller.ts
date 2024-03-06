@@ -34,7 +34,7 @@ export class InventoryController {
         });
       }
 
-      const existingInventory = await prisma.product_inventory.findFirst({
+      const existingInventory = await prisma.product_Inventory.findFirst({
         where: {
           product_id: productId
         }
@@ -47,7 +47,7 @@ export class InventoryController {
         });
       }
 
-      const newStoreProduct = await prisma.product_inventory.create({
+      const newStoreProduct = await prisma.product_Inventory.create({
         data: {
           store_id: Number(storeId),
           product_id: productId,
@@ -68,7 +68,7 @@ export class InventoryController {
     try {
       const { storeId } = req.params;
 
-      const products = await prisma.product_inventory.findMany({
+      const products = await prisma.product_Inventory.findMany({
         where: {
           store_id: Number(storeId)
         },
@@ -101,7 +101,7 @@ export class InventoryController {
     try {
       const { storeId, productId } = req.params;
 
-      const productInventory = await prisma.product_inventory.findFirst({
+      const productInventory = await prisma.product_Inventory.findFirst({
         where: {
           store_id: Number(storeId),
           product_id: Number(productId)

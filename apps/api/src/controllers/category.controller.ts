@@ -6,7 +6,7 @@ export class CategoryController {
     try {
       const categories = await prisma.product_Category.findMany({
         include: {
-          product: true,
+          products: true,
         }
       });
 

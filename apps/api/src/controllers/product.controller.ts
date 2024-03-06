@@ -12,8 +12,8 @@ export class ProductController {
           price: true,
           createdAt: true,
           updatedAt: true,
-          categoryId: true,
-          Product_inventory: true
+          category: true,
+          product_inventories: true
         },
       });
 
@@ -41,8 +41,8 @@ export class ProductController {
           price: true,
           createdAt: true,
           updatedAt: true,
-          categoryId: true,
-          Product_inventory: true
+          category: true,
+          product_inventories: true
         },
       });
 
@@ -84,8 +84,7 @@ export class ProductController {
           name,
           description,
           price,
-          image: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fexcelso-coffee.com%2Fproduct%2Fexcelso-the-classic-bubuk-200g%2F&psig=AOvVaw2J3vzp6Lzv3nzJL2yS7gmy&ust=1709693010012000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCMDGqPaM3IQDFQAAAAAdAAAAABAR',
-          categoryId: {
+          category: {
             connect: {
               name: category
             }
