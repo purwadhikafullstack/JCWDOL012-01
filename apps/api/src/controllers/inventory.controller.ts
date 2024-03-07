@@ -36,6 +36,7 @@ export class InventoryController {
 
       const existingInventory = await prisma.product_Inventory.findFirst({
         where: {
+          store_id: Number(storeId),
           product_id: productId
         }
       });
@@ -67,11 +68,47 @@ export class InventoryController {
   async getProductsByStore(req: Request, res: Response, next: NextFunction) {
     try {
       const { storeId } = req.params;
+      let searchQuery: any = {};
+
+      if (req.query.search || req.query.cat) {
+        searchQuery = { OR: [] };
+      }
+
+      if (req.query.search) {
+        searchQuery.OR.push({
+          product: {
+            name: { contains: String(req.query.search) }
+          }
+        });
+      }
+
+      if (req.query.cat) {
+        searchQuery.OR.push({
+          product: {
+            category: {
+              name: { contains: String(req.query.cat) }
+            }
+          }
+        });
+      }
+
+      let { page, perPage } = req.query;
+      let skip = 0;
+      let take = 2;
+      if (perPage && !isNaN(Number(perPage))) {
+        take = Number(perPage);
+      }
+      if (page && !isNaN(Number(page))) {
+        skip = take * (Number(page) - 1);
+      }
 
       const products = await prisma.product_Inventory.findMany({
         where: {
-          store_id: Number(storeId)
+          store_id: Number(storeId),
+          ...searchQuery
         },
+        skip,
+        take,
         select: {
           id: true,
           product: true,
@@ -79,6 +116,13 @@ export class InventoryController {
           createdAt: true,
           updatedAt: true,
         }
+      });
+
+      const totalProduct = await prisma.product_Inventory.count({
+        where: {
+          store_id: Number(storeId),
+          ...searchQuery
+        },
       });
 
       if (!products) {
@@ -90,7 +134,10 @@ export class InventoryController {
 
       return res.status(200).json({
         success: true,
-        results: products
+        results: {
+          totalProduct,
+          products
+        }
       });
     } catch (error) {
       return next(error);
