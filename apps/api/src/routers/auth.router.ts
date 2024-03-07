@@ -8,8 +8,12 @@ export class AuthRouter {
   constructor() {
     this.authController = new AuthController();
     this.router = Router();
+    this.initializaRoutes();
   }
   private initializaRoutes(): void {
-    this.router.post('');
+    this.router.post('/register', this.authController.registerUser);
+  }
+  getRouter(): Router{
+    return this.router
   }
 }

@@ -21,28 +21,37 @@ model Sample {
 }
 
 model Users {
-  id            Int       @id @default(autoincrement())
-  user_name     String    @unique
-  email         String    @unique
-  password      String
-  telephone     String
-  image         String
-  referral_code String
-  role          type_role
-  created_at    DateTime  @default(now())
-  update_at     DateTime  @updatedAt
+  id                 Int            @id @default(autoincrement())
+  user_name          String         @unique
+  email              String         @unique
+  password           String?
+  telephone          String?
+  image              String?
+  referral_code      String?
+  role               role           @default(Customers)
+  email_verification Boolean        @default(false)
+  created_at         DateTime       @default(now())
+  update_at          DateTime       @updatedAt
+  user_address       user_address[]
 }
 
-enum type_role {
-  super_admin
-  store_admin
-  user
+enum role {
+  Customers
+  Store_Admin
+  Super_Admin
 }
 
 model user_address {
-  id           Int    @id @default(autoincrement())
-  user_id      Int
-  address_line String
-  city         String
-  country      String
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  street     String
+  city       String
+  cityId     Int
+  province   String
+  latitude   Decimal
+  longitude  Decimal
+  isPrimary  Boolean
+  created_at DateTime @default(now())
+  update_at  DateTime @updatedAt
+  userId     Users    @relation(fields: [user_id], references: [id])
 }

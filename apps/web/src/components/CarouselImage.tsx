@@ -3,8 +3,6 @@
 import * as React from 'react';
 import Autoplay from 'embla-carousel-autoplay';
 import Image from 'next/image';
-
-import { Card, CardContent } from '@/components/ui/card';
 import {
   Carousel,
   CarouselContent,
@@ -13,10 +11,11 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 
-const imageData: ImageInfo[] = [
+const imageData = [
+  { src: '/Hero04.jpg', alt: 'Hero04' },
   { src: '/Hero01.jpg', alt: 'Hero01' },
-  { src: '/Hero02.jpg', alt: 'Hero02' },
-  { src: '/Hero03.jpg', alt: 'Hero03' },
+  { src: '/Hero04.jpg', alt: 'Hero04' },
+  // { src: '/Hero02.jpg', alt: 'Hero02' },
 ];
 
 export default function CarouselImage() {
@@ -26,27 +25,21 @@ export default function CarouselImage() {
   return (
     <Carousel
       plugins={[plugin.current]}
-      className="max-w-screen-md "
+      className="container max-w-6xl"
       onMouseEnter={plugin.current.stop}
       onMouseLeave={plugin.current.reset}
     >
       <CarouselContent>
         {imageData.map((image, index) => (
           <CarouselItem key={index}>
-            <div className="p-1">
-              <Card>
-                <center>
-                  <CardContent className=" bg-center max-w-fit flex justify-center p-5">
-                    <Image
-                      className="max-w-full border rounded-lg"
-                      src={image.src}
-                      alt={image.alt}
-                      width={2000}
-                      height={2000}
-                    />
-                  </CardContent>
-                </center>
-              </Card>
+            <div className="flex overflow-hidden">
+              <img
+                className="static w-full rounded-lg"
+                src={image.src}
+                alt={image.alt}
+                width={1000}
+                height={1000}
+              />
             </div>
           </CarouselItem>
         ))}
