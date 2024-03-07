@@ -10,6 +10,7 @@ import express, {
 import cors from 'cors';
 import { PORT } from './config';
 import { CartRouter } from './routers/cart.router';
+import { TransactionRouter } from './routers/transaction.router';
 
 export default class App {
   private app: Express;
@@ -52,6 +53,7 @@ export default class App {
 
   private routes(): void {
     const cartRouter = new CartRouter();
+    const transactionRouter = new TransactionRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
@@ -59,6 +61,7 @@ export default class App {
 
     this.app.use(express.static('public'));
     this.app.use('/api/cart', cartRouter.getRouter());
+    this.app.use('/api/transaction', transactionRouter.getRouter());
   }
 
   public start(): void {
