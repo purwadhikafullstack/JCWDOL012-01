@@ -12,6 +12,7 @@ import { PORT } from './config';
 import { ProductRouter } from './routers/product.router';
 import { InventoryRouter } from './routers/inventory.router';
 import { CategoryRouter } from './routers/category.router';
+import { StoreRouter } from './routers/store.router';
 
 export default class App {
   private app: Express;
@@ -53,16 +54,18 @@ export default class App {
   }
 
   private routes(): void {
-    const productRouter = new ProductRouter();
     const inventoryRouter = new InventoryRouter();
+    const storeRouter = new StoreRouter();
+    const productRouter = new ProductRouter();
     const categoryRouter = new CategoryRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
 
-    this.app.use('/api/products', productRouter.getRouter());
     this.app.use('/api/store', inventoryRouter.getRouter());
+    this.app.use('/api/store', storeRouter.getRouter());
+    this.app.use('/api/products', productRouter.getRouter());
     this.app.use('/api/categories', categoryRouter.getRouter());
   }
 
