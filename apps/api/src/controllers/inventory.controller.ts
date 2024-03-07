@@ -115,6 +115,7 @@ export class InventoryController {
           quantity: true,
           createdAt: true,
           updatedAt: true,
+          store: true
         }
       });
 

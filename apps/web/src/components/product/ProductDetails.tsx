@@ -27,7 +27,7 @@ export default function ProductDetails({ storeId, productId }: Props) {
   return (
     <div className="max-w-7xl mx-auto p-2 flex flex-col gap-2 lg:flex-row">
       {/* image */}
-      <div className='space-y-4'>
+      <div className="space-y-4">
         <div className="bg-white rounded-md">
           <Image
             src={
@@ -46,7 +46,7 @@ export default function ProductDetails({ storeId, productId }: Props) {
         </div>
       </div>
 
-      <div className="space-y-2 lg:space-y-0 lg:flex lg:flex-col lg:gap-4">
+      <div className="space-y-2 lg:space-y-0 lg:flex lg:flex-col lg:gap-4 w-full">
         {/* name, price, stock */}
         <div className="bg-white rounded-md p-4 space-y-4">
           <p className="text-xl font-semibold">{data?.results.product.name}</p>
@@ -93,10 +93,7 @@ export default function ProductDetails({ storeId, productId }: Props) {
         <div className="bg-white rounded-md p-4 space-y-4">
           <p className="text-xl font-semibold">Description</p>
           <p>
-            {data?.results.product.description} Lorem ipsum dolor sit amet,
-            consectetur adipisicing elit. Laboriosam reiciendis inventore eum
-            aut, aspernatur quisquam sint nemo ipsum dicta quod assumenda earum
-            iure. Expedita ratione deleniti possimus est, tenetur perferendis!
+            {data?.results.product.description} 
           </p>
         </div>
       </div>
