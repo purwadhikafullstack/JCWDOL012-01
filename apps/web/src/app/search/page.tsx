@@ -40,7 +40,7 @@ export default function SearchPage() {
       <div className="flex flex-col lg:flex-row gap-8 mt-4">
         {data?.results.products.map((product: any, index: number) => {
           return (
-            <div key={index} className="border-2 rounded-md p-4 space-y-2 mx-auto">
+            <div key={index} className="border-2 rounded-md p-4 space-y-2 mx-auto lg:mx-0">
               <Image
                 src={
                   'https://excelso-coffee.com/wp-content/uploads/2020/07/excelso-Kalosi-Toraja-Biji-200g-2.jpg'

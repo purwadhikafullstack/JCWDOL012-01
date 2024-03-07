@@ -64,7 +64,7 @@ export class ProductController {
 
   async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, description, price, category } = req.body;
+      const { name, description, price, weight, category } = req.body;
 
       const existingProduct = await prisma.product.findUnique({
         where: {
@@ -84,6 +84,7 @@ export class ProductController {
           name,
           description,
           price,
+          weight,
           category: {
             connect: {
               name: category
@@ -95,6 +96,34 @@ export class ProductController {
       return res.status(201).json({
         success: true,
         results: product
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async deleteProductById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      const existingProduct = await prisma.product.findUnique({
+        where: { id: Number(id) }
+      });
+
+      if (!existingProduct) {
+        return res.status(400).json({
+          success: false,
+          message: 'Product not found'
+        });
+      }
+
+      await prisma.product.delete({
+        where: { id: Number(id) }
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: 'Product deleted successfully'
       });
     } catch (error) {
       return next(error);
