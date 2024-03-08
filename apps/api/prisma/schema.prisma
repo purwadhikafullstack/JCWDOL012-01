@@ -11,21 +11,21 @@ datasource db {
 }
 
 model User {
-  id                 Int           @id @default(autoincrement())
-  user_name          String        @unique
-  email              String        @unique
+  id                 Int            @id @default(autoincrement())
+  user_name          String         @unique
+  email              String         @unique
   password           String?
   telephone          String?
   image              String?
   refferal_code      String?
-  role               Role          @default(Customer)
-  email_verification Boolean       @default(false)
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-  User_Adress        User_Adress[]
-  store              Store[]
-  Cart               Cart[]
-  Orders             Orders[]
+  role               Role           @default(Customer)
+  email_verification Boolean        @default(false)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  user_Adresses      User_Address[]
+  stores             Store[]
+  carts              Cart[]
+  orders             Orders[]
 }
 
 enum Role {
@@ -34,9 +34,10 @@ enum Role {
   Super_Admin
 }
 
-model User_Adress {
+model User_Address {
   id        Int        @id @default(autoincrement())
   user_id   Int
+  label     String
   street    String
   city      String
   cityId    Int
@@ -46,40 +47,51 @@ model User_Adress {
   isPrimary Boolean
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  userId    User       @relation(fields: [user_id], references: [id])
-  Shipment  Shipment[]
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  shipments Shipment[]
 }
 
 model Store {
-  id                Int                 @id @default(autoincrement())
-  user_id           Int
-  street            String
-  city              String
-  latitude          Decimal
-  longtitude        Decimal
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  userId            User                @relation(fields: [user_id], references: [id])
-  Product_inventory Product_inventory[]
-  Voucher           Voucher[]
-  Order_Item        Order_Item[]
-  Shipment          Shipment[]
+  id                  Int                 @id @default(autoincrement())
+  user_id             Int
+  street              String
+  city                String
+  province            String
+  cityId              Int
+  latitude            Decimal
+  longitude           Decimal
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  user                User                @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product_inventories Product_Inventory[]
+  vouchers            Voucher[]
+  order_items         Order_Item[]
+  shipments           Shipment[]
 }
 
 model Product {
-  id                Int                 @id @default(autoincrement())
-  name              String              @unique
-  description       String
-  category_id       Int
-  image             Json
-  price             Decimal
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  categoryId        Product_Category    @relation(fields: [category_id], references: [id])
-  Product_inventory Product_inventory[]
-  Voucher           Voucher[]
-  Cart              Cart[]
-  Order_Item        Order_Item[]
+  id                  Int                 @id @default(autoincrement())
+  name                String              @unique
+  description         String
+  category_id         Int
+  price               Decimal
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  category            Product_Category    @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product_inventories Product_Inventory[]
+  vouchers            Voucher[]
+  carts               Cart[]
+  order_items         Order_Item[]
+  images              Image[]
+}
+
+model Image {
+  id         Int      @id @default(autoincrement())
+  product_id Int
+  url        String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Product_Category {
@@ -87,19 +99,19 @@ model Product_Category {
   name      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  product   Product[]
+  products  Product[]
 }
 
-model Product_inventory {
+model Product_Inventory {
   id         Int        @id @default(autoincrement())
   store_id   Int
   product_id Int
   quantity   Int
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  storeId    Store      @relation(fields: [store_id], references: [id])
-  productId  Product    @relation(fields: [product_id], references: [id])
-  Stocklog   Stocklog[]
+  store      Store      @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product    Product    @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  stocklogs  Stocklog[]
 }
 
 model Stocklog {
@@ -108,7 +120,7 @@ model Stocklog {
   typeLog      StockLogType
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
-  inventoryId  Product_inventory @relation(fields: [inventory_id], references: [id])
+  inventory    Product_Inventory @relation(fields: [inventory_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum StockLogType {
@@ -127,9 +139,9 @@ model Voucher {
   expired_at   DateTime
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  storeId      Store         @relation(fields: [store_id], references: [id])
-  ProductId    Product?      @relation(fields: [product_id], references: [id])
-  Orders       Orders[]
+  store        Store         @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product      Product?      @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  orders       Orders[]
 }
 
 enum Discount_Type {
@@ -144,8 +156,8 @@ model Cart {
   quantity   Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  userId     User     @relation(fields: [user_id], references: [id])
-  productId  Product  @relation(fields: [product_id], references: [id])
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Orders {
@@ -157,11 +169,11 @@ model Orders {
   status      Order_Status @default(pending)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  userId      User         @relation(fields: [user_id], references: [id])
-  voucherId   Voucher?     @relation(fields: [voucher_id], references: [id])
-  shipmentId  Shipment     @relation(fields: [shipment_id], references: [id])
-  Order_Item  Order_Item[]
-  Payment     Payment[]
+  user        User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  voucher     Voucher?     @relation(fields: [voucher_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  shipment    Shipment     @relation(fields: [shipment_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  order_Items Order_Item[]
+  payment     Payment[]
 }
 
 model Order_Item {
@@ -172,9 +184,9 @@ model Order_Item {
   quantity   Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  orderId    Orders   @relation(fields: [order_id], references: [id])
-  productId  Product  @relation(fields: [product_id], references: [id])
-  storeId    Store    @relation(fields: [store_id], references: [id])
+  order      Orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  store      Store    @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Shipment {
@@ -185,9 +197,9 @@ model Shipment {
   type       Shipment_Type
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
-  addressId  User_Adress   @relation(fields: [address_id], references: [id])
-  storeId    Store         @relation(fields: [store_id], references: [id])
-  Order      Orders[]
+  address    User_Address  @relation(fields: [address_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  store      Store         @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  orders     Orders[]
 }
 
 enum Shipment_Type {
@@ -207,7 +219,7 @@ model Payment {
   shipped_at DateTime?
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
-  orderId    Orders         @relation(fields: [order_id], references: [id])
+  order      Orders         @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum Payment_Method {

@@ -1,11 +1,33 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 interface CheckoutContextType {
-  currentStep: number;
-  checkoutData: any; // Sesuaikan tipe data dengan informasi checkout Anda
-  paymentState: any; // Sesuaikan tipe data dengan informasi pembayaran Anda
-  moveToNextStep: () => void;
-  moveToPreviousStep: () => void;
+  checkoutData: CheckoutDataType | undefined;
+  setCheckoutData: React.Dispatch<
+    React.SetStateAction<CheckoutDataType | undefined>
+  >;
+}
+
+interface CheckoutDataType {
+  orderDetails: {
+    products: {
+      productId: number;
+      quantity: number;
+      unitPrice: number;
+      totalPrice: number;
+    }[];
+    total: number;
+    voucherId?: number;
+  };
+  shipmentDetails: {
+    userAddressId: number;
+    storeId: number;
+    shippingCost: number;
+    shipmentType: string;
+  };
+  paymentDetails: {
+    method: string;
+    bank: string;
+  };
 }
 
 const CheckoutContext = createContext<CheckoutContextType | undefined>(
@@ -27,20 +49,13 @@ interface CheckoutProviderProps {
 export const CheckoutProvider = ({
   children,
 }: CheckoutProviderProps): JSX.Element => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [checkoutData, setCheckoutData] = useState<any>({});
-  const [paymentState, setPaymentState] = useState<any>({});
-
-  const moveToNextStep = (): void => setCurrentStep((prevStep) => prevStep + 1);
-  const moveToPreviousStep = (): void =>
-    setCurrentStep((prevStep) => prevStep - 1);
+  const [checkoutData, setCheckoutData] = useState<
+    CheckoutDataType | undefined
+  >(undefined);
 
   const values: CheckoutContextType = {
-    currentStep,
     checkoutData,
-    paymentState,
-    moveToNextStep,
-    moveToPreviousStep,
+    setCheckoutData,
   };
 
   return (

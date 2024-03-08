@@ -1,12 +1,14 @@
-interface CheckoutTotalProps {
-  onNextStep: () => void; // Deklarasikan prop onNextStep
-}
+import { ModalPayment } from './ModalPayment';
 
-export const CheckoutTotal: React.FC<CheckoutTotalProps> = ({ onNextStep }) => {
+export const CheckoutTotalCopy = () => {
   return (
     <div className="border p-5 flex flex-col gap-5 rounded-md bg-white">
       <div className="flex justify-between text-gray-400">
         <span className="text-sm">Total Harga Pesanan</span>
+        <span className="text-sm">Rp 50.000</span>
+      </div>
+      <div className="flex justify-between text-gray-400">
+        <span className="text-sm">Ongkos Kirim</span>
         <span className="text-sm">Rp 50.000</span>
       </div>
       <div className=" border-gray-400 border" />
@@ -19,12 +21,10 @@ export const CheckoutTotal: React.FC<CheckoutTotalProps> = ({ onNextStep }) => {
         <span className="text-sm">Total Pembayaran</span>
         <span className="text-sm">Rp 50.000</span>
       </div>
-      <button
-        className="py-2 rounded-sm bg-blue-500 text-white font-bold"
-        onClick={onNextStep}
-      >
-        Pilih Opsi Pengiriman
-      </button>
+      <ModalPayment />
+      {/* <button className="py-2 rounded-sm bg-blue-500 text-white font-bold">
+        Pilih Pembayaran
+      </button> */}
     </div>
   );
 };

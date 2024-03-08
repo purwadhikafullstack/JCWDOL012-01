@@ -9,8 +9,12 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
+import { AuthRouter } from './routers/auth.router';
 import { CartRouter } from './routers/cart.router';
-import { TransactionRouter } from './routers/transaction.router';
+import { ProductRouter } from './routers/product.router';
+import { AddressRouter } from './routers/address.router';
+import { ShipmentRouter } from './routers/shipment.router';
+import { VoucherRouter } from './routers/voucher.router';
 
 export default class App {
   private app: Express;
@@ -52,16 +56,24 @@ export default class App {
   }
 
   private routes(): void {
+    const authRouter = new AuthRouter();
     const cartRouter = new CartRouter();
-    const transactionRouter = new TransactionRouter();
+    const productRouter = new ProductRouter();
+    const addressRouter = new AddressRouter();
+    const shipmentRouter = new ShipmentRouter();
+    const voucherRouter = new VoucherRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
 
     this.app.use(express.static('public'));
+    this.app.use('/api/products', productRouter.getRouter());
+    this.app.use('/api/auth', authRouter.getRouter());
     this.app.use('/api/cart', cartRouter.getRouter());
-    this.app.use('/api/transaction', transactionRouter.getRouter());
+    this.app.use('/api/address', addressRouter.getRouter());
+    this.app.use('/api/shipment', shipmentRouter.getRouter());
+    this.app.use('/api/voucher', voucherRouter.getRouter());
   }
 
   public start(): void {

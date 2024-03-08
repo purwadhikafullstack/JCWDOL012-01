@@ -25,7 +25,7 @@ export class CartController {
     const dataUser = req.dataUser;
     const { quantity, store_id, product_id } = req.body;
     try {
-      const stock = await prisma.product_inventory.findFirst({
+      const stock = await prisma.product_Inventory.findFirst({
         where: {
           product_id: Number(product_id),
           store_id: Number(store_id),
@@ -80,12 +80,13 @@ export class CartController {
         const product = await prisma.product.findUnique({
           where: { id: item.product_id },
         });
-        const firstImage = Array.isArray(product?.image)
-          ? product?.image[0]
-          : null;
+        const image = await prisma.image.findFirst({
+          where: { product_id: item.product_id },
+        });
+
         cartWithProduct.push({
           ...item,
-          image: `http://${req.get('host')}/image/${firstImage}`,
+          image: `http://${req.get('host')}/image/${image?.url}`,
           price: product?.price,
           name: product?.name,
         });
