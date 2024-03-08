@@ -7,7 +7,7 @@ import CardBenefit from './CardBenefit';
 export default function HeroSection() {
   return (
     <>
-      <div className="flex justify-center py-24">
+      <div className="flex justify-center">
         <CarouselImage />
       </div>
       <div>

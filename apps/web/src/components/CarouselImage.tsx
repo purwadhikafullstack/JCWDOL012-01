@@ -25,7 +25,7 @@ export default function CarouselImage() {
   return (
     <Carousel
       plugins={[plugin.current]}
-      className="container max-w-6xl"
+      className="container max-w-6xl py-28"
       onMouseEnter={plugin.current.stop}
       onMouseLeave={plugin.current.reset}
     >
