@@ -1,6 +1,5 @@
-'use client';
-
 import * as React from 'react';
+
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Carousel,
@@ -10,38 +9,40 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 
-const CardProduct: React.FC = () => {
-  // Menentukan jumlah total item
-  const totalItems = 8; // Ubah menjadi 8
+const totalProduct = 12; // total product used
 
+export function CardProduct() {
   return (
-    <div className="flex justify-center items-center h-full">
-      <Carousel opts={{ align: 'start' }} className="w-full max-w-sm">
-        <CarouselContent className="flex">
-          {/* Membuat item kartu sebanyak totalItems */}
-          {Array.from({ length: totalItems }).map((_, index) => (
-            <CarouselItem key={index} className="w-1/4 px-1">
-              <div className="w-full">
-                <Card>
-                  <CardContent className="flex items-center justify-center p-6">
-                    <img
-                      className="object-cover w-full h-full"
-                      src={`https://via.placeholder.com/150?text=Product${
-                        index + 1
-                      }`}
-                      alt={`Product ${index + 1}`}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
+    <div className="flex flex-col items-center">
+      {' '}
+      {/* Centering the text and carousel */}
+      <h1 className="text-2xl font-semibold mb-4">Minuman</h1>
+      <div className=" flex justify-center">
+        {/* open size card carousel */}
+        <Carousel className="w-full max-w-5xl">
+          {/*close size card carousel  */}
+          <CarouselContent className="-ml-1">
+            {Array.from({ length: totalProduct }).map((_, index) => (
+              <CarouselItem
+                key={index}
+                className="pl-1 md:basis-1/2 lg:basis-1/6 " // add card on display
+              >
+                <div className="p-1">
+                  <Card>
+                    <CardContent className="flex aspect-square items-center justify-center p-6">
+                      <span className="text-2xl font-semibold">
+                        {index + 1}
+                      </span>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      </div>
     </div>
   );
-};
-
-export default CardProduct;
+}
