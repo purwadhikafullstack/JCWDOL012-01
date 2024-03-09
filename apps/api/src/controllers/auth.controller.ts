@@ -47,6 +47,8 @@ export class AuthController {
         where: { email: req.body.email },
       });
 
+      const password: any = users.password;
+
       // generate token
       const jwtToken = sign(
         {
@@ -54,18 +56,18 @@ export class AuthController {
           role: users.role,
           email: users.email,
         },
-        'secret123',
+        'Secret123',
       );
 
       // for compare password from database and request body password
-      const isValidPassword = await compare(req.body.password, users.password);
+      const isValidPassword = await compare(req.body.password, password);
       // conditional password if variable isvalidpassword false
       if (!isValidPassword) {
         throw new Error('Invalid password');
       }
 
       // showing in thunder client, and token must showing in js-cookies
-      return res.status(201).send({
+      return res.status(200).send({
         id: users.id,
         user_name: users.user_name,
         email: users.email,
@@ -79,9 +81,35 @@ export class AuthController {
       });
     }
   }
-
+  // logout user
   async logoutUsers(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {}
+  }
+
+  // reset password
+  async resetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      // find data user from email
+      const dataUser = req.dataUser;
+      const existingUser = await prisma.users.findFirstOrThrow({
+        where: { email: dataUser.email },
+      });
+      // the password used hashpassword and find email
+      const salt = await genSalt(10);
+      const hashPassword = await hash(req.body.password, salt);
+      await prisma.users.update({
+        where: { email: existingUser.email },
+        data: { password: hashPassword },
+      });
+      // response status success
+      return res.send({
+        status: true,
+        message: 'success',
+      });
+      // response status error
+    } catch (error) {
+      next(error);
+    }
   }
 }

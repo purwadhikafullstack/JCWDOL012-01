@@ -1,7 +1,8 @@
 'use client';
+
 import React from 'react';
 
-export default function RegisterForm() {
+export default function Register() {
   return (
     <>
       <div className="flex h-screen">

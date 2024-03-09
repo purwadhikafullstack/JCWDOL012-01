@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
 import CarouselImage from './CarouselImage';
-import CardProduct from './CardProduct';
 import CardBenefit from './CardBenefit';
+import CardProduct from './CardProduct';
 
 export default function HeroSection() {
   return (

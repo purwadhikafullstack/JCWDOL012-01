@@ -22,6 +22,7 @@ export default function CarouselImage() {
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true }),
   );
+
   return (
     <Carousel
       plugins={[plugin.current]}
@@ -33,12 +34,12 @@ export default function CarouselImage() {
         {imageData.map((image, index) => (
           <CarouselItem key={index}>
             <div className="flex overflow-hidden">
-              <img
+              <Image
                 className="static w-full rounded-lg"
                 src={image.src}
                 alt={image.alt}
                 width={1000}
-                height={1000}
+                height={0}
               />
             </div>
           </CarouselItem>
