@@ -2,13 +2,12 @@
 import useUpdateCart from '@/hooks/useUpdateCart';
 import { useCart } from '@/provider/CartProvider';
 import { CartItem } from '@/utils/cartTypes';
-
 import Image from 'next/image';
 import { useState } from 'react';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import ModalConfirmDelete from './ModalConfirmDelete';
 import { formatToRupiah } from '@/lib/formatToRupiah';
-import useDeleteCart from '@/hooks/UseDeleteCart';
+import useDeleteCart from '@/hooks/useDeleteCart';
 
 interface Props {
   cartItem: CartItem;

@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
-import { NavbarCheckout } from './NavbarCheckout';
 import { IoInformationCircle } from 'react-icons/io5';
 import { CheckoutListProduct } from './CheckoutListProduct';
-import { CheckoutAdress } from './CheckoutAdress';
 import { CheckoutTotal } from './CheckoutTotal';
 import { CheckoutVoucher } from './CheckoutVoucher';
 import { useCart } from '@/provider/CartProvider';
 import { formatToRupiah } from '@/lib/formatToRupiah';
+import { CheckoutAddress } from './CheckoutAddress';
 
 interface CheckoutProductSelectionProps {
   onNextStep: () => void;
@@ -56,7 +55,7 @@ export const CheckoutProductSelection: React.FC<
             </div>
           </div>
           <div className="hidden lg:flex lg:flex-col space-y-5 w-1/4 sticky top-1 h-screen">
-            <CheckoutAdress />
+            <CheckoutAddress />
             <CheckoutTotal onNextStep={onNextStep} />
             <CheckoutVoucher />
           </div>

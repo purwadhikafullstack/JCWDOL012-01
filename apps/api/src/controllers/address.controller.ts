@@ -18,4 +18,25 @@ export class AddressController {
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
+  async updatePrimaryAddress(req: Request, res: Response) {
+    const { addressId } = req.params;
+    try {
+      await prisma.user_Address.updateMany({
+        where: {
+          isPrimary: true,
+        },
+        data: { isPrimary: false },
+      });
+
+      const updateAddress = await prisma.user_Address.update({
+        where: { id: Number(addressId) },
+        data: { isPrimary: true },
+      });
+
+      res.status(200).json(updateAddress);
+    } catch (error) {
+      console.error('Error updating address:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 }

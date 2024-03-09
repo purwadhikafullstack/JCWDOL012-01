@@ -1,10 +1,31 @@
-import React from 'react';
-import { CheckoutTotal } from './CheckoutTotal';
-import { CheckoutTotalCopy } from './CheckoutTotal copy';
+import React, { useEffect, useState } from 'react';
 import { SelectShipment } from './SelectShipment';
 import { ShipmentListProduct } from './ShipmentListProduct';
+import { CheckoutTotalShipment } from './CheckoutTotalShipment';
+import useGetAddress from '@/hooks/useGetAddress';
+import { UserAddress } from '@/utils/addressTypes';
+import useGetUser from '@/hooks/useGetUser';
+import useGetCart from '@/hooks/useGetCart';
+import useGetShipment from '@/hooks/useGetShipment';
 
 export const CheckoutShipment = () => {
+  const { data: shipmentCost } = useGetShipment();
+  const { data, isLoading, isError } = useGetAddress();
+  const { data: dataCart } = useGetCart();
+  const { data: dataUser } = useGetUser();
+  const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (!isLoading && !isError && data && shipmentCost) {
+      const primaryAddresses = data.filter((address) => address.isPrimary);
+      if (primaryAddresses.length > 0) {
+        setSelectedAddress(primaryAddresses[0]);
+      }
+    }
+  }, [data, shipmentCost]);
+
   return (
     <div>
       <div className="bg-gray-100">
@@ -18,23 +39,46 @@ export const CheckoutShipment = () => {
                 </button>
               </div>
               <div className="flex flex-col justify-between bg-white border rounded-sm w-full p-3 gap-3">
-                <div className="font-bold text-base">Label</div>
-                <div className="text-sm">nama (xxxxxxx)</div>
-                <div className="text-sm">street , city province</div>
+                <div className="font-bold text-base">
+                  {selectedAddress?.label}
+                </div>
+                <div className="text-sm">
+                  {dataUser?.user_name} ({dataUser?.telephone})
+                </div>
+                <div className="text-sm">
+                  {selectedAddress?.street} , {selectedAddress?.city}{' '}
+                  {selectedAddress?.province}
+                </div>
               </div>
             </div>
             <div className="flex flex-col bg-white p-5 rounded-sm gap-3">
               <p className="font-bold text-base">Metode Pengiriman</p>
-              <SelectShipment />
+              <SelectShipment
+                shipmentOptions={shipmentCost?.shippingCost[0] ?? []}
+              />
               <div className="flex justify-between">
                 <p className="font-bold text-base">Pesanan</p>
-                <p className="text-gray-400 text-base">1 Qty</p>
+                <p className="flex text-gray-400 text-base gap-1">
+                  {dataCart?.reduce(
+                    (total, item) => total + item.quantity,
+                    0,
+                  ) ?? 0}
+                  <span>Qty</span>
+                </p>
               </div>
-              <ShipmentListProduct />
+              <div className="flex flex-col mt-5 mb-5">
+                {dataCart && dataCart.length > 0 && (
+                  <div className="flex flex-col gap-7">
+                    {dataCart.map((item) => (
+                      <ShipmentListProduct key={item.id} cartItem={item} />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="hidden lg:flex lg:flex-col space-y-5 w-1/4 sticky top-1 h-screen">
-            <CheckoutTotalCopy />
+            <CheckoutTotalShipment />
           </div>
         </div>
       </div>

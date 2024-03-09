@@ -1,6 +1,6 @@
 import { ModalPayment } from './ModalPayment';
 
-export const CheckoutTotalCopy = () => {
+export const CheckoutTotalShipment = () => {
   return (
     <div className="border p-5 flex flex-col gap-5 rounded-md bg-white">
       <div className="flex justify-between text-gray-400">
@@ -22,9 +22,6 @@ export const CheckoutTotalCopy = () => {
         <span className="text-sm">Rp 50.000</span>
       </div>
       <ModalPayment />
-      {/* <button className="py-2 rounded-sm bg-blue-500 text-white font-bold">
-        Pilih Pembayaran
-      </button> */}
     </div>
   );
 };

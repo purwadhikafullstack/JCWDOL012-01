@@ -14,6 +14,11 @@ export class AddressRouter {
 
   private initializeRoutes(): void {
     this.router.get('/', verifyToken, this.addressController.getAdress);
+    this.router.patch(
+      '/:addressId/isPrimary',
+      verifyToken,
+      this.addressController.updatePrimaryAddress,
+    );
   }
 
   getRouter(): Router {

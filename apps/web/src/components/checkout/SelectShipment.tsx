@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   Select,
   SelectContent,
@@ -9,8 +7,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { formatToRupiah } from '@/lib/formatToRupiah';
 
-export function SelectShipment() {
+interface Props {
+  shipmentOptions: ShippingCost[];
+}
+
+export function SelectShipment({ shipmentOptions }: Props) {
   return (
     <Select>
       <SelectTrigger className="w-full">
@@ -19,11 +22,19 @@ export function SelectShipment() {
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Pengiriman</SelectLabel>
-          <SelectItem value="apple">Apple</SelectItem>
-          <SelectItem value="banana">Banana</SelectItem>
-          <SelectItem value="blueberry">Blueberry</SelectItem>
-          <SelectItem value="grapes">Grapes</SelectItem>
-          <SelectItem value="pineapple">Pineapple</SelectItem>
+          {shipmentOptions.map((option, index) => (
+            <SelectItem key={index} value={option.service}>
+              <div className="flex flex-col items-start">
+                <p className="font-semibold">{option.service}</p>
+                <div className="flex gap-2">
+                  <p>Estimasi tiba {option.cost[0].etd} hari</p>|
+                  <p className="font-semibold">
+                    {formatToRupiah(option.cost[0].value)}
+                  </p>
+                </div>
+              </div>
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>

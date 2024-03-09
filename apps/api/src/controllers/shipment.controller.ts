@@ -41,7 +41,7 @@ export class ShipmentController {
         const nearestStoreCityId =
           nearestStores.length > 0 ? nearestStores[0].cityId : null;
 
-        const shippingCost = await axios.post(
+        const shipment = await axios.post(
           'https://api.rajaongkir.com/starter/cost',
           {
             origin: nearestStoreCityId,
@@ -56,8 +56,10 @@ export class ShipmentController {
             },
           },
         );
+        const results = shipment.data.rajaongkir.results;
+        const shippingCost = results.map((result: any) => result.costs);
 
-        return res.status(200).send(shippingCost.data);
+        return res.status(200).send({ shippingCost });
       } else {
         throw new Error('cannot get Address');
       }
