@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
+
 export const registerValidator = [
   // username status
   body('user_name').notEmpty().withMessage('Username Required'),

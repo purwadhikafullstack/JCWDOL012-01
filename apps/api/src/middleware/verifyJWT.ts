@@ -15,7 +15,7 @@ export const verifyToken = async (
   next: NextFunction,
 ) => {
   try {
-    const token = req.header('Authorization')?.split(' ')[1];
+    const token: any = req.header('Authorization')?.split(' ')[1];
     if (token) {
       return res.status(400).send('Token not found');
     }

@@ -36,7 +36,10 @@ export class AuthController {
       // response register user
       return res.status(201).send({ success: true, result: newUser });
     } catch (error: any) {
-      next(error);
+      return res.status(500).json({
+        status: false,
+        message: error.message,
+      });
     }
   }
 
@@ -84,6 +87,8 @@ export class AuthController {
   // logout user
   async logoutUsers(req: Request, res: Response, next: NextFunction) {
     try {
+      // const dataUser = req.body.dataUser;
+      // cons
     } catch (error) {}
   }
 
@@ -91,7 +96,7 @@ export class AuthController {
   async resetPassword(req: Request, res: Response, next: NextFunction) {
     try {
       // find data user from email
-      const dataUser = req.dataUser;
+      const dataUser = req.body.dataUser;
       const existingUser = await prisma.users.findFirstOrThrow({
         where: { email: dataUser.email },
       });
