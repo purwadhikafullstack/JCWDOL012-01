@@ -1,19 +1,40 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useCheckout } from '@/hooks/useCheckout';
 import Image from 'next/image';
 import { useState } from 'react';
 
 export const ModalPayment = () => {
   const [selectedPayment, setSelectedPayment] = useState('Transfer Manual');
+  const {
+    orderItems,
+    paymentMethod,
+    totalPrice,
+    voucher,
+    shippingCost,
+    selectPaymentMethod,
+  } = useCheckout();
 
   const handlePaymentChange = (event: any) => {
     setSelectedPayment(event.target.value);
+    selectPaymentMethod(event.target.value);
+  };
+
+  const handlePayment = () => {
+    const data = {
+      orderItems,
+      paymentMethod,
+      totalPrice,
+      voucher,
+      shippingCost,
+    };
+
+    console.log(data);
   };
   return (
     <Dialog>
@@ -113,7 +134,10 @@ export const ModalPayment = () => {
               </div>
             </label>
           </div>
-          <button className="py-2 rounded-sm bg-blue-500 text-white font-bold w-full">
+          <button
+            onClick={handlePayment}
+            className="py-2 rounded-sm bg-blue-500 text-white font-bold w-full"
+          >
             Bayar Sekarang
           </button>
         </div>

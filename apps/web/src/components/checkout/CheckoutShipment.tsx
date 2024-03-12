@@ -7,6 +7,7 @@ import { UserAddress } from '@/utils/addressTypes';
 import useGetUser from '@/hooks/useGetUser';
 import useGetCart from '@/hooks/useGetCart';
 import useGetShipment from '@/hooks/useGetShipment';
+import { useCheckout } from '@/hooks/useCheckout';
 
 export const CheckoutShipment = () => {
   const { data: shipmentCost } = useGetShipment();
@@ -18,13 +19,13 @@ export const CheckoutShipment = () => {
   );
 
   useEffect(() => {
-    if (!isLoading && !isError && data && shipmentCost) {
+    if (!isLoading && !isError && data) {
       const primaryAddresses = data.filter((address) => address.isPrimary);
       if (primaryAddresses.length > 0) {
         setSelectedAddress(primaryAddresses[0]);
       }
     }
-  }, [data, shipmentCost]);
+  }, [data]);
 
   return (
     <div>
@@ -55,6 +56,8 @@ export const CheckoutShipment = () => {
               <p className="font-bold text-base">Metode Pengiriman</p>
               <SelectShipment
                 shipmentOptions={shipmentCost?.shippingCost[0] ?? []}
+                addressId={shipmentCost?.addressId ?? 0}
+                storeId={shipmentCost?.storeId ?? 0}
               />
               <div className="flex justify-between">
                 <p className="font-bold text-base">Pesanan</p>

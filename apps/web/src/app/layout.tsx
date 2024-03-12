@@ -4,6 +4,7 @@ import './globals.css';
 import { CookiesProvider } from 'next-client-cookies/server';
 import QueryProvider from '@/provider/QueryProvider';
 import { CartProvider } from '@/provider/CartProvider';
+import { CheckoutProvider } from '@/provider/CheckoutProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,7 +23,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <CookiesProvider>
           <QueryProvider>
-            <CartProvider>{children}</CartProvider>
+            <CheckoutProvider>
+              <CartProvider>{children}</CartProvider>
+            </CheckoutProvider>
           </QueryProvider>
         </CookiesProvider>
       </body>

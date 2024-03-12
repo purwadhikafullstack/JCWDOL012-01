@@ -14,7 +14,7 @@ export const ShipmentListProduct = ({ cartItem }: Props) => {
         <p className="text-sm font-bold">{cartItem.name}</p>
       </div>
       <div className="flex flex-col w-1/2 items-end justify-center  text-base">
-        <p>1x</p>
+        <p className="text-base">{cartItem.quantity}x</p>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-interface ShippingCost {
+export interface ShippingCost {
   service: string;
   description: string;
   cost: {
@@ -8,6 +8,15 @@ interface ShippingCost {
   }[];
 }
 
-interface ShippingCostResponse {
+export interface ShippingCostResponse {
   shippingCost: ShippingCost[][];
+  addressId: number;
+  storeId: number;
+}
+
+export interface ShippingDetails {
+  addressId: number;
+  storeId: number;
+  shippingCost: number;
+  shippingType: string;
 }

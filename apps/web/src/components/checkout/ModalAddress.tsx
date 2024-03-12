@@ -13,7 +13,6 @@ import useGetAddress from '@/hooks/useGetAddress';
 import { ListAddress } from './ListAddress';
 import { UserAddress } from '@/utils/addressTypes';
 import useUpdateAddress from '@/hooks/useUpdateAddress';
-import { UpdateAddressModal } from './UpdateAddressModal';
 
 export const CheckoutAddress = () => {
   const { data, isLoading, isError } = useGetAddress();

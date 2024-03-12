@@ -1,3 +1,4 @@
+import { ShippingCostResponse } from '@/utils/shipmentType';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useCookies } from 'next-client-cookies';

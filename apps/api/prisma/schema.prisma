@@ -10,6 +10,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Test {
+  id     Int        @id @default(autoincrement())
+  title  String
+  status testStatus @default(pending)
+}
+
+enum testStatus {
+  pending
+  confimation
+  cancel
+}
+
 model User {
   id                 Int            @id @default(autoincrement())
   user_name          String         @unique

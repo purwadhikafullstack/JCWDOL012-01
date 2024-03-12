@@ -59,6 +59,7 @@ export const CartButton = () => {
         <SheetContent style={{ overflowY: 'auto' }}>
           <SheetHeader>
             <SheetTitle>Keranjang</SheetTitle>
+            <hr className="border-1 border-black w-full mt-2" />
           </SheetHeader>
           <div className="flex flex-col mt-5 mb-5">
             {cart && cart.length > 0 && (

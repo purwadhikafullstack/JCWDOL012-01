@@ -41,6 +41,9 @@ export class ShipmentController {
         const nearestStoreCityId =
           nearestStores.length > 0 ? nearestStores[0].cityId : null;
 
+        const nearestStoreId =
+          nearestStores.length > 0 ? nearestStores[0].id : null;
+
         const shipment = await axios.post(
           'https://api.rajaongkir.com/starter/cost',
           {
@@ -59,7 +62,11 @@ export class ShipmentController {
         const results = shipment.data.rajaongkir.results;
         const shippingCost = results.map((result: any) => result.costs);
 
-        return res.status(200).send({ shippingCost });
+        return res.status(200).send({
+          shippingCost,
+          addressId: address.id, // Menyertakan addressId
+          storeId: nearestStoreId, // Menyertakan storeId
+        });
       } else {
         throw new Error('cannot get Address');
       }

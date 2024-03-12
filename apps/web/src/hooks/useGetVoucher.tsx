@@ -1,3 +1,4 @@
+import { useCart } from '@/provider/CartProvider';
 import { Voucher } from '@/utils/voucherTypes';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -19,7 +20,8 @@ const useGetVoucher = () => {
 
         return res.data;
       } catch (error: any) {
-        throw new Error(error.message);
+        console.error('Error fetching voucher:', error);
+        throw new Error('Failed to fetch voucher');
       }
     },
     refetchOnWindowFocus: false,

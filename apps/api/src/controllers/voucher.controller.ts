@@ -5,7 +5,6 @@ import { getDistance } from 'geolib';
 export class VoucherController {
   async getVoucher(req: Request, res: Response) {
     const dataUser = req.dataUser;
-    const productIds = req.body.map((product: any) => product.product_id);
     try {
       const address = await prisma.user_Address.findFirst({
         where: { user_id: dataUser.id, isPrimary: true },
@@ -27,6 +26,12 @@ export class VoucherController {
         });
         const nearestStoreId =
           nearestStores.length > 0 ? nearestStores[0].id : undefined;
+
+        const carts = await prisma.cart.findMany({
+          where: { user_id: dataUser.id },
+        });
+
+        const productIds = carts.map((cart) => cart.product_id);
 
         const voucher = await prisma.voucher.findMany({
           where: {
