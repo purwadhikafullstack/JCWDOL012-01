@@ -42,7 +42,8 @@ export class ProductController {
           createdAt: true,
           updatedAt: true,
           category: true,
-          product_inventories: true
+          product_inventories: true,
+          images: true,
         },
       });
 
@@ -65,6 +66,14 @@ export class ProductController {
   async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, description, price, weight, category } = req.body;
+      const files: any = req.files;
+
+      if (!files?.length) {
+        return res.status(400).json({
+          success: false,
+          message: 'no image uploaded'
+        });
+      }
 
       const existingProduct = await prisma.product.findUnique({
         where: {
@@ -93,9 +102,20 @@ export class ProductController {
         }
       });
 
+      const images = files.map((file: Express.Multer.File) => {
+        return { product_id: product.id, url: 'images/' + file?.filename };
+      });
+
+      const productImages = await prisma.image.createMany({
+        data: images
+      });
+
       return res.status(201).json({
         success: true,
-        results: product
+        results: {
+          product,
+          images: productImages
+        }
       });
     } catch (error) {
       return next(error);
