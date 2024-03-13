@@ -4,6 +4,7 @@ import './globals.css';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import QueryProvider from '@/provider/QueryProvider';
+import ApplicationWrapper from '@/components/ApplicationWrapper';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,9 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <QueryProvider>
-          <Header />
-          {children}
-          <Footer />
+          <ApplicationWrapper>{children}</ApplicationWrapper>
         </QueryProvider>
       </body>
     </html>
