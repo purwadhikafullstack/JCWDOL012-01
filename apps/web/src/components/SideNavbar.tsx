@@ -6,9 +6,9 @@ import { Nav } from './ui/nav';
 import {
   ChevronRight,
   LayoutDashboard,
-  Settings,
   ShoppingCart,
   UsersRound,
+  ScrollText,
 } from 'lucide-react';
 import { Button } from './ui/button';
 
@@ -53,9 +53,9 @@ const SideNavbar = (props: Props) => {
             variant: 'ghost',
           },
           {
-            title: 'Settings',
-            href: '/settings',
-            icon: Settings,
+            title: 'Categories',
+            href: '/dashboard/categories',
+            icon: ScrollText,
             variant: 'ghost',
           },
         ]}
