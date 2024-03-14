@@ -1,30 +1,19 @@
 'use client';
 
-import { MoreHorizontal } from 'lucide-react';
+import { Delete, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Input } from '@/components/ui/input';
 import EditCategory from '@/components/dashboard/EditCategory';
+import DeleteCategory from '@/components/dashboard/DeleteCategory';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -52,15 +41,6 @@ export const columns: ColumnDef<Category>[] = [
     cell: ({ row }) => {
       const category = row.original;
 
-      const handleDelete = async (id: number) => {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_API_URL}/categories/${id}`,
-          { method: 'DELETE' },
-        );
-
-        const results = await res.json();
-      };
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -73,31 +53,8 @@ export const columns: ColumnDef<Category>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <div className="flex flex-col items-start p-2 gap-2">
-              <EditCategory name={category.name} id={Number(category.id)} />
-              <Dialog>
-                <DialogTrigger className="text-red-500">Delete</DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Delete Category</DialogTitle>
-                    <DialogDescription>
-                      All product with category &quot;{category.name}&quot; will
-                      be set to null !
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button
-                        onClick={() => {
-                          handleDelete(Number(category.id));
-                          location.reload();
-                        }}
-                      >
-                        Yes !
-                      </Button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <EditCategory id={Number(category.id)} name={category.name} />
+              <DeleteCategory id={Number(category.id)} name={category.name} />
             </div>
           </DropdownMenuContent>
         </DropdownMenu>

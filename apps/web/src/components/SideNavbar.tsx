@@ -47,7 +47,7 @@ const SideNavbar = (props: Props) => {
             variant: 'ghost',
           },
           {
-            title: 'Ordrs',
+            title: 'Orders',
             href: '/orders',
             icon: ShoppingCart,
             variant: 'ghost',
