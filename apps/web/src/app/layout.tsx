@@ -4,6 +4,9 @@ import './globals.css';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import HeroSection from '@/components/HeroSection';
+import { CookiesProvider } from 'next-client-cookies/server';
+import QueryProvider from '@/provider/QueryProvider';
+import { CartProvider } from '@/provider/CartProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,9 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header />
-        {children}
-        <Footer />
+        <CookiesProvider>
+          <QueryProvider>
+            <CartProvider>{children}</CartProvider>
+          </QueryProvider>
+        </CookiesProvider>
       </body>
     </html>
   );

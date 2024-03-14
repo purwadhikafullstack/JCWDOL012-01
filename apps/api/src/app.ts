@@ -8,8 +8,9 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-// import { SampleRouter } from './routers/sample.router';
 import { AuthRouter } from './routers/auth.router';
+import { CartRouter } from './routers/cart.router';
+
 
 export default class App {
   private app: Express;
@@ -51,12 +52,16 @@ export default class App {
   }
 
   private routes(): void {
+    const cartRouter = new CartRouter();
+
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
     const authController = new AuthRouter();
 
     this.app.use('/auth', authController.getRouter());
+    this.app.use(express.static('public'));
+    this.app.use('/api/cart', cartRouter.getRouter());
   }
 
   public start(): void {
