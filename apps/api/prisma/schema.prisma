@@ -33,7 +33,6 @@ enum Role {
   Store_Admin
   Super_Admin
 }
-
 model User_Adress {
   id        Int        @id @default(autoincrement())
   user_id   Int
