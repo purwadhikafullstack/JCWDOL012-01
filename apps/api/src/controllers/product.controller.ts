@@ -10,6 +10,7 @@ export class ProductController {
           name: true,
           description: true,
           price: true,
+          weight: true,
           createdAt: true,
           updatedAt: true,
           category: true,

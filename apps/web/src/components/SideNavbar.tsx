@@ -9,6 +9,7 @@ import {
   ShoppingCart,
   UsersRound,
   ScrollText,
+  NotebookPen,
 } from 'lucide-react';
 import { Button } from './ui/button';
 
@@ -47,9 +48,9 @@ const SideNavbar = (props: Props) => {
             variant: 'ghost',
           },
           {
-            title: 'Orders',
-            href: '/orders',
-            icon: ShoppingCart,
+            title: 'Product Catalog',
+            href: '/dashboard/products',
+            icon: NotebookPen,
             variant: 'ghost',
           },
           {

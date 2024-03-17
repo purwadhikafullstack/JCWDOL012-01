@@ -77,7 +77,7 @@ model Product {
   weight              Decimal
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
-  category            Product_Category?   @relation(fields: [category_id], references: [id], onDelete: SetNull, onUpdate: SetNull)
+  category            Product_Category?   @relation(fields: [category_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   product_inventories Product_Inventory[]
   vouchers            Voucher[]
   carts               Cart[]

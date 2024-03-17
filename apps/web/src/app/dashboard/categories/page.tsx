@@ -23,7 +23,7 @@ import CreateCategory from '@/components/dashboard/CreateCategory';
 //   }));
 // }
 
-export default function DemoPage() {
+export default function DashboardCategories() {
   const { data, isError, isLoading } = useCategories();
 
   if (isLoading) return <div>Loading...</div>;
