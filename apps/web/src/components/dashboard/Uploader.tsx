@@ -7,13 +7,18 @@ import { useState } from 'react';
 type Props = {
   id: string;
   files: File[];
-  // setFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  setFiles: any;
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  imageUrl?: string;
 };
 
-export default function Uploader({ id, files: fs, setFiles }: Props) {
-  const [image, setImage] = useState('');
-  const [fileName, setFileName] = useState('No selected file');
+export default function Uploader({
+  id,
+  files: fs,
+  setFiles,
+  imageUrl = '',
+}: Props) {
+  const [image, setImage] = useState(imageUrl);
+  const [fileName, setFileName] = useState(imageUrl ? '' : 'No selected file');
 
   return (
     <div className="flex flex-col items-center">
@@ -25,7 +30,7 @@ export default function Uploader({ id, files: fs, setFiles }: Props) {
             setImage('');
             setFileName('No selected file');
             await setFiles((prev: File[]) => {
-              return prev.filter((f: File) => f.name != file.files[0].name);
+              return prev.filter((f: File) => f.name != file?.files[0]?.name);
             });
             file.value = '';
           }}
@@ -48,6 +53,9 @@ export default function Uploader({ id, files: fs, setFiles }: Props) {
                   files && files[0] && setFileName(files[0]?.name);
                   setImage(URL.createObjectURL(files[0]));
                   setFiles((prev: File[]) => [...prev, files[0]]);
+                } else {
+                  const file: any = document.getElementById(id);
+                  file.value = '';
                 }
               }
             }}

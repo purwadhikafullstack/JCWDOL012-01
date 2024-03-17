@@ -1,5 +1,6 @@
 'use client';
 
+import useProduct from '@/hooks/useProduct';
 import useCategories from '@/hooks/useCategories';
 import { Input } from '../ui/input';
 import {
@@ -15,23 +16,39 @@ import { Button } from '../ui/button';
 import { useFormik } from 'formik';
 import { validateNewEvent } from '@/lib/validation';
 import useCreateProduct from '@/hooks/useCreateProduct';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from '../ui/use-toast';
 import { useRouter } from 'next/navigation';
 
-export default function CreateProduct() {
+export default function EditProduct({ id }: { id: string }) {
+  const router = useRouter();
+  const {
+    data: productData,
+    isLoading: productLoading,
+    isError,
+    refetch,
+  } = useProduct({ id });
+
   const { data, isLoading } = useCategories();
   const { mutate, isPending } = useCreateProduct();
   const [files, setFiles] = useState<File[]>([]);
-  const router = useRouter();
+  const [name, setName] = useState(productData?.results?.name);
+  const [price, setPrice] = useState(productData?.results?.price);
+  const [weight, setWeight] = useState(productData?.results?.weight);
+  const [category, setCategory] = useState(
+    productData?.results?.category?.name,
+  );
+  const [description, setDescription] = useState(
+    productData?.results?.description,
+  );
 
   const formik: any = useFormik({
     initialValues: {
-      name: '',
-      price: 0,
-      weight: 0,
-      category: '',
-      description: '',
+      name: name,
+      price: price,
+      weight: weight,
+      category: category,
+      description: description,
     },
     validationSchema: validateNewEvent,
     onSubmit: ({ name, price, weight, category, description }) => {
@@ -64,6 +81,21 @@ export default function CreateProduct() {
     },
   });
 
+  useEffect(() => {
+    if (!productLoading) {
+      setName(productData?.results?.name);
+      setPrice(productData?.results?.price);
+      setWeight(productData?.results?.weight);
+      setCategory(productData?.results?.category?.name);
+      setDescription(productData?.results?.description);
+    }
+  }, [productData, productLoading]);
+
+  if (productLoading) return <div>Loading...</div>;
+
+  console.log(productData?.results);
+  const product = productData?.results;
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="space-y-4">
@@ -71,10 +103,42 @@ export default function CreateProduct() {
         <div>
           <div className="mb-2 font-semibold">Image</div>
           <div className="flex gap-2">
-            <Uploader id="image-1" files={files} setFiles={setFiles} />
-            <Uploader id="image-2" files={files} setFiles={setFiles} />
-            <Uploader id="image-3" files={files} setFiles={setFiles} />
-            <Uploader id="image-4" files={files} setFiles={setFiles} />
+            <Uploader
+              id="image-1"
+              files={files}
+              setFiles={setFiles}
+              imageUrl={
+                product.images[0] &&
+                `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[0]?.url}`
+              }
+            />
+            <Uploader
+              id="image-2"
+              files={files}
+              setFiles={setFiles}
+              imageUrl={
+                product.images[1] &&
+                `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[1]?.url}`
+              }
+            />
+            <Uploader
+              id="image-3"
+              files={files}
+              setFiles={setFiles}
+              imageUrl={
+                product.images[2] &&
+                `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[2]?.url}`
+              }
+            />
+            <Uploader
+              id="image-4"
+              files={files}
+              setFiles={setFiles}
+              imageUrl={
+                product.images[3] &&
+                `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[3]?.url}`
+              }
+            />
           </div>
         </div>
         {/* name */}
@@ -84,6 +148,7 @@ export default function CreateProduct() {
             name="name"
             type="text"
             className="border-slate-300"
+            defaultValue={name}
             {...formik.getFieldProps('name')}
           />
           {formik.touched.name && formik.errors.name ? (
@@ -99,6 +164,7 @@ export default function CreateProduct() {
             type="number"
             placeholder="Rp."
             className="border-slate-300"
+            defaultValue={price}
             {...formik.getFieldProps('price')}
           />
           {formik.touched.price && formik.errors.price ? (
@@ -114,6 +180,7 @@ export default function CreateProduct() {
             type="number"
             placeholder="grams."
             className="border-slate-300"
+            defaultValue={weight}
             {...formik.getFieldProps('weight')}
           />
           {formik.touched.weight && formik.errors.weight ? (
@@ -126,9 +193,10 @@ export default function CreateProduct() {
           <div className="mb-2 font-semibold">Category</div>
           <Select
             onValueChange={(value) => {
-              // formik.setFieldValue('categoryId', value);
               formik.setFieldValue('category', value);
             }}
+            defaultValue={category}
+            value={category}
           >
             <SelectTrigger className="text-slate-800 border-slate-300">
               {isLoading ? (
@@ -153,6 +221,7 @@ export default function CreateProduct() {
           <Textarea
             name="description"
             className="border-slate-300"
+            defaultValue={description}
             {...formik.getFieldProps('description')}
           />
           {formik.touched.description && formik.errors.description ? (
@@ -161,7 +230,7 @@ export default function CreateProduct() {
             </div>
           ) : null}
         </div>
-        <Button disabled={isPending}>Submit !</Button>
+        <Button disabled={isPending}>Update !</Button>
       </div>
     </form>
   );

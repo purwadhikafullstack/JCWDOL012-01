@@ -40,6 +40,7 @@ export class ProductController {
           name: true,
           description: true,
           price: true,
+          weight: true,
           createdAt: true,
           updatedAt: true,
           category: true,
@@ -135,6 +136,19 @@ export class ProductController {
         return res.status(400).json({
           success: false,
           message: 'Product not found'
+        });
+      }
+
+      const existingInventory = await prisma.product_Inventory.findFirst({
+        where: {
+          product_id: Number(id)
+        }
+      });
+
+      if (existingInventory) {
+        return res.status(400).json({
+          success: false,
+          message: 'Some store assign this product'
         });
       }
 

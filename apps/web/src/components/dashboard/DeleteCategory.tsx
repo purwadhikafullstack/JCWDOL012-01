@@ -34,10 +34,11 @@ export default function DeleteCategory({ id, name }: Props) {
           });
           refetch();
         },
-        onError: () => {
+        onError: (res: any) => {
           toast({
             variant: 'destructive',
             title: 'Category Failed to delete !',
+            description: res?.response?.data?.message,
           });
         },
       },
@@ -51,7 +52,7 @@ export default function DeleteCategory({ id, name }: Props) {
         <DialogHeader>
           <DialogTitle>Delete Category</DialogTitle>
           <DialogDescription>
-            All product with category &quot;{name}&quot; will be set to null !
+            Category cannot deleted, if some product have this category !
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

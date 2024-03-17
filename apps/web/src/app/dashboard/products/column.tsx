@@ -1,23 +1,12 @@
 'use client';
 
-import { Delete, MoreHorizontal } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-
 import { ColumnDef } from '@tanstack/react-table';
-import EditCategory from '@/components/dashboard/EditCategory';
-import DeleteCategory from '@/components/dashboard/DeleteCategory';
+import Link from 'next/link';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Product = {
+  no: number;
   id: string;
   name: string;
   description: string;
@@ -30,12 +19,19 @@ export type Product = {
 
 export const columns: ColumnDef<Product>[] = [
   {
-    accessorKey: 'id',
-    header: 'Id',
+    accessorKey: 'no',
+    header: 'No.',
   },
   {
     accessorKey: 'name',
     header: 'Name',
+    cell: ({ row }) => {
+      const product = row.original;
+
+      return (
+        <Link href={`/dashboard/products/${product.id}`}>{product.name}</Link>
+      );
+    },
   },
   {
     accessorKey: 'description',
