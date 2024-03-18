@@ -105,7 +105,7 @@ export class ProductController {
       });
 
       const images = files.map((file: Express.Multer.File) => {
-        return { product_id: product.id, url: 'images/' + file?.filename };
+        return { product_id: product.id, url: process.env.BASE_URL + 'images/' + file?.filename };
       });
 
       const productImages = await prisma.image.createMany({

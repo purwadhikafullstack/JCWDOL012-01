@@ -25,11 +25,11 @@ export default function Uploader({
       <div className="relative w-[100px] h-[100px]">
         <X
           className="absolute right-0 top-0 text-cyan-200 z-10 cursor-pointer"
-          onClick={async () => {
+          onClick={() => {
             const file: any = document.getElementById(id);
             setImage('');
             setFileName('No selected file');
-            await setFiles((prev: File[]) => {
+            setFiles((prev: File[]) => {
               return prev.filter((f: File) => f.name != file?.files[0]?.name);
             });
             file.value = '';
