@@ -51,7 +51,7 @@ export default function StoreCard({
       </CardContent>
       <CardFooter className="flex justify-between">
         <Link
-          href={`/dashboard/stores/${id}`}
+          href={`/dashboard/stores/${id}/inventories`}
           className={cn(buttonVariants(), 'w-full h-8')}
         >
           View Inventory
