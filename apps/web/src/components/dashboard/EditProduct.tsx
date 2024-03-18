@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import Uploader from './Uploader';
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
 import { useFormik } from 'formik';
@@ -19,6 +18,7 @@ import useCreateProduct from '@/hooks/useCreateProduct';
 import { useEffect, useState } from 'react';
 import { toast } from '../ui/use-toast';
 import { useRouter } from 'next/navigation';
+import EditImage from './EditImage';
 
 export default function EditProduct({ id }: { id: string }) {
   const router = useRouter();
@@ -31,6 +31,7 @@ export default function EditProduct({ id }: { id: string }) {
 
   const { data, isLoading } = useCategories();
   const { mutate, isPending } = useCreateProduct();
+  const [removedFiles, setRemovedFiles] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [name, setName] = useState(productData?.results?.name);
   const [price, setPrice] = useState(productData?.results?.price);
@@ -41,6 +42,7 @@ export default function EditProduct({ id }: { id: string }) {
   const [description, setDescription] = useState(
     productData?.results?.description,
   );
+  console.log(removedFiles);
 
   const formik: any = useFormik({
     initialValues: {
@@ -78,6 +80,9 @@ export default function EditProduct({ id }: { id: string }) {
           },
         },
       );
+      // if (removedFiles) {
+
+      // }
     },
   });
 
@@ -93,7 +98,6 @@ export default function EditProduct({ id }: { id: string }) {
 
   if (productLoading) return <div>Loading...</div>;
 
-  console.log(productData?.results);
   const product = productData?.results;
 
   return (
@@ -103,37 +107,45 @@ export default function EditProduct({ id }: { id: string }) {
         <div>
           <div className="mb-2 font-semibold">Image</div>
           <div className="flex gap-2">
-            <Uploader
+            <EditImage
               id="image-1"
               files={files}
               setFiles={setFiles}
+              setRemovedFiles={setRemovedFiles}
+              imageId={product.images[0]?.id}
               imageUrl={
                 product.images[0] &&
                 `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[0]?.url}`
               }
             />
-            <Uploader
+            <EditImage
               id="image-2"
               files={files}
               setFiles={setFiles}
+              setRemovedFiles={setRemovedFiles}
+              imageId={product.images[1]?.id}
               imageUrl={
                 product.images[1] &&
                 `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[1]?.url}`
               }
             />
-            <Uploader
+            <EditImage
               id="image-3"
               files={files}
               setFiles={setFiles}
+              setRemovedFiles={setRemovedFiles}
+              imageId={product.images[2]?.id}
               imageUrl={
                 product.images[2] &&
                 `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[2]?.url}`
               }
             />
-            <Uploader
+            <EditImage
               id="image-4"
               files={files}
               setFiles={setFiles}
+              setRemovedFiles={setRemovedFiles}
+              imageId={product.images[3]?.id}
               imageUrl={
                 product.images[3] &&
                 `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[3]?.url}`

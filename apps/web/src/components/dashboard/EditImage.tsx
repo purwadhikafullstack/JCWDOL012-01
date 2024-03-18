@@ -8,14 +8,17 @@ type Props = {
   id: string;
   files: File[];
   setFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  setRemovedFiles?: React.Dispatch<React.SetStateAction<number>>;
+  setRemovedFiles: React.Dispatch<React.SetStateAction<string[]>>;
+  imageId: string;
   imageUrl?: string;
 };
 
-export default function Uploader({
+export default function EditImage({
   id,
   files: fs,
   setFiles,
+  setRemovedFiles,
+  imageId,
   imageUrl = '',
 }: Props) {
   const [image, setImage] = useState(imageUrl);
@@ -30,6 +33,7 @@ export default function Uploader({
             const file: any = document.getElementById(id);
             setImage('');
             setFileName('No selected file');
+            setRemovedFiles((prev) => [...prev, imageId]);
             setFiles((prev: File[]) => {
               return prev.filter((f: File) => f.name != file?.files[0]?.name);
             });
