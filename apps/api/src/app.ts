@@ -5,7 +5,6 @@ import express, {
   Request,
   Response,
   NextFunction,
-  Router,
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
@@ -13,6 +12,9 @@ import { ProductRouter } from './routers/product.router';
 import { InventoryRouter } from './routers/inventory.router';
 import { CategoryRouter } from './routers/category.router';
 import { StoreRouter } from './routers/store.router';
+import { AuthRouter } from './routers/auth.router';
+import { CartRouter } from './routers/cart.router';
+
 
 export default class App {
   private app: Express;
@@ -59,15 +61,20 @@ export default class App {
     const storeRouter = new StoreRouter();
     const productRouter = new ProductRouter();
     const categoryRouter = new CategoryRouter();
+    const cartRouter = new CartRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
+    const authController = new AuthRouter();
 
     this.app.use('/api/store', inventoryRouter.getRouter());
     this.app.use('/api/store', storeRouter.getRouter());
     this.app.use('/api/products', productRouter.getRouter());
     this.app.use('/api/categories', categoryRouter.getRouter());
+    this.app.use('/auth', authController.getRouter());
+    this.app.use(express.static('public'));
+    this.app.use('/api/cart', cartRouter.getRouter());
   }
 
   public start(): void {
