@@ -14,85 +14,93 @@ import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
 import { useFormik } from 'formik';
 import { validateNewEvent } from '@/lib/validation';
-import useCreateProduct from '@/hooks/useCreateProduct';
 import { useEffect, useState } from 'react';
 import { toast } from '../ui/use-toast';
 import { useRouter } from 'next/navigation';
 import EditImage from './EditImage';
+import useEditImage from '@/hooks/useEditImage';
+import useEditProduct from '@/hooks/useEditProduct';
 
 export default function EditProduct({ id }: { id: string }) {
   const router = useRouter();
-  const {
-    data: productData,
-    isLoading: productLoading,
-    isError,
-    refetch,
-  } = useProduct({ id });
+  const { data: productData, isLoading: productLoading, refetch } = useProduct({ id });
 
   const { data, isLoading } = useCategories();
-  const { mutate, isPending } = useCreateProduct();
+  const { mutate, isPending } = useEditProduct();
+  const { mutate: editImage, isPending: editImageLoading } = useEditImage();
   const [removedFiles, setRemovedFiles] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
-  const [name, setName] = useState(productData?.results?.name);
-  const [price, setPrice] = useState(productData?.results?.price);
-  const [weight, setWeight] = useState(productData?.results?.weight);
   const [category, setCategory] = useState(
     productData?.results?.category?.name,
   );
-  const [description, setDescription] = useState(
-    productData?.results?.description,
-  );
-  console.log(removedFiles);
 
   const formik: any = useFormik({
     initialValues: {
-      name: name,
-      price: price,
-      weight: weight,
-      category: category,
-      description: description,
+      name: '',
+      price: 0,
+      weight: 0,
+      category: '',
+      description: '',
     },
+    enableReinitialize: true,
     validationSchema: validateNewEvent,
-    onSubmit: ({ name, price, weight, category, description }) => {
+    onSubmit: ({
+      name,
+      price,
+      weight,
+      description,
+    }) => {
       mutate(
-        {
-          name,
-          price,
-          weight,
-          category,
-          description,
-          files: files,
-        },
+        { id, name, price, weight, category, description },
         {
           onSuccess: () => {
             toast({
               variant: 'success',
-              title: 'Product created successfully !',
+              title: 'Product updated successfully !',
             });
+            refetch();
             router.push('/dashboard/products');
           },
           onError: (res: any) => {
             toast({
               variant: 'destructive',
-              title: 'Failed to create product !',
+              title: 'Failed to update product !',
               description: res?.response?.data?.message,
             });
           },
         },
       );
-      // if (removedFiles) {
 
-      // }
+      if (files) {
+        files?.forEach((file: File, i: number) => {
+          editImage(
+            { imageId: removedFiles[i], file },
+            {
+              onSuccess: () => {
+                console.log('sucess update image');
+              },
+              onError: (res: any) => {
+                toast({
+                  variant: 'destructive',
+                  title: 'Failed to update image !',
+                  description: res?.response?.data?.message,
+                });
+              },
+            },
+          );
+        });
+      }
     },
   });
 
   useEffect(() => {
     if (!productLoading) {
-      setName(productData?.results?.name);
-      setPrice(productData?.results?.price);
-      setWeight(productData?.results?.weight);
+      formik.setFieldValue('name', productData?.results?.name);
+      formik.setFieldValue('price', productData?.results?.price);
+      formik.setFieldValue('weight', productData?.results?.weight);
+      formik.setFieldValue('category', productData?.results?.category?.name);
+      formik.setFieldValue('description', productData?.results?.description);
       setCategory(productData?.results?.category?.name);
-      setDescription(productData?.results?.description);
     }
   }, [productData, productLoading]);
 
@@ -148,7 +156,7 @@ export default function EditProduct({ id }: { id: string }) {
             name="name"
             type="text"
             className="border-slate-300"
-            defaultValue={name}
+            // defaultValue={name}
             {...formik.getFieldProps('name')}
           />
           {formik.touched.name && formik.errors.name ? (
@@ -164,7 +172,7 @@ export default function EditProduct({ id }: { id: string }) {
             type="number"
             placeholder="Rp."
             className="border-slate-300"
-            defaultValue={price}
+            // defaultValue={price}
             {...formik.getFieldProps('price')}
           />
           {formik.touched.price && formik.errors.price ? (
@@ -180,7 +188,7 @@ export default function EditProduct({ id }: { id: string }) {
             type="number"
             placeholder="grams."
             className="border-slate-300"
-            defaultValue={weight}
+            // defaultValue={weight}
             {...formik.getFieldProps('weight')}
           />
           {formik.touched.weight && formik.errors.weight ? (
@@ -195,8 +203,8 @@ export default function EditProduct({ id }: { id: string }) {
             onValueChange={(value) => {
               formik.setFieldValue('category', value);
             }}
-            defaultValue={category}
             value={category}
+            defaultValue={category}
           >
             <SelectTrigger className="text-slate-800 border-slate-300">
               {isLoading ? (
@@ -221,7 +229,7 @@ export default function EditProduct({ id }: { id: string }) {
           <Textarea
             name="description"
             className="border-slate-300"
-            defaultValue={description}
+            // defaultValue={description}
             {...formik.getFieldProps('description')}
           />
           {formik.touched.description && formik.errors.description ? (
@@ -230,7 +238,9 @@ export default function EditProduct({ id }: { id: string }) {
             </div>
           ) : null}
         </div>
-        <Button disabled={isPending}>Update !</Button>
+        <Button type="submit" disabled={isPending}>
+          Update !
+        </Button>
       </div>
     </form>
   );
