@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import HeroSection from '@/components/HeroSection';
+import ApplicationWrapper from '@/components/ApplicationWrapper';
+import { Toaster } from '@/components/ui/toaster';
 import { CookiesProvider } from 'next-client-cookies/server';
 import QueryProvider from '@/provider/QueryProvider';
 import { CartProvider } from '@/provider/CartProvider';
@@ -25,7 +24,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <CookiesProvider>
           <QueryProvider>
-            <CartProvider>{children}</CartProvider>
+            <CartProvider>
+              <ApplicationWrapper>
+                {children}
+                <Toaster />
+              </ApplicationWrapper>
+            </CartProvider>
           </QueryProvider>
         </CookiesProvider>
       </body>

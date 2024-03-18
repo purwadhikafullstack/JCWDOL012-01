@@ -10,7 +10,7 @@ export class AuthController {
       const user_name = req.body.user_name;
 
       // existing User for email
-      const existingUser = await prisma.users.findUnique({
+      const existingUser = await prisma.user.findUnique({
         where: {
           email: email,
         },
@@ -25,7 +25,7 @@ export class AuthController {
       const hashPassword = await hash(req.body.password, salt);
 
       // sign up account or new User
-      const newUser = await prisma.users.create({
+      const newUser = await prisma.user.create({
         data: {
           user_name: req.body.user_name,
           email: req.body.email,
@@ -46,7 +46,7 @@ export class AuthController {
   // login User
   async loginUser(req: Request, res: Response) {
     try {
-      const users = await prisma.users.findUniqueOrThrow({
+      const users = await prisma.user.findUniqueOrThrow({
         where: { email: req.body.email },
       });
 
@@ -89,7 +89,7 @@ export class AuthController {
     try {
       // const dataUser = req.body.dataUser;
       // cons
-    } catch (error) {}
+    } catch (error) { }
   }
 
   // reset password
@@ -97,13 +97,13 @@ export class AuthController {
     try {
       // find data user from email
       const dataUser = req.body.dataUser;
-      const existingUser = await prisma.users.findFirstOrThrow({
+      const existingUser = await prisma.user.findFirstOrThrow({
         where: { email: dataUser.email },
       });
       // the password used hashpassword and find email
       const salt = await genSalt(10);
       const hashPassword = await hash(req.body.password, salt);
-      await prisma.users.update({
+      await prisma.user.update({
         where: { email: existingUser.email },
         data: { password: hashPassword },
       });
