@@ -12,6 +12,7 @@ import { Button } from '../ui/button';
 import useDeleteCategory from '@/hooks/useDeleteCategory';
 import useCategories from '@/hooks/useCategories';
 import { useToast } from '../ui/use-toast';
+import { Trash2 } from 'lucide-react';
 
 type Props = {
   id: number;
@@ -47,7 +48,10 @@ export default function DeleteCategory({ id, name }: Props) {
 
   return (
     <Dialog>
-      <DialogTrigger className="text-red-500">Delete</DialogTrigger>
+      <DialogTrigger className="text-red-500 flex items-center gap-2">
+        <Trash2 className="w-4 h-4" />
+        Delete
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Category</DialogTitle>

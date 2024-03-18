@@ -13,6 +13,7 @@ import { useState } from 'react';
 import useCategories from '@/hooks/useCategories';
 import useEditCategory from '@/hooks/useEditCategory';
 import { useToast } from '../ui/use-toast';
+import { Pencil } from 'lucide-react';
 
 type Props = {
   name: string;
@@ -49,7 +50,9 @@ const EditCategory = ({ name, id }: Props) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={(e) => setOpen(e)}>
-      <DialogTrigger>Edit</DialogTrigger>
+      <DialogTrigger className='flex items-center gap-2'>
+      <Pencil className='w-4 h-4' />
+        Edit</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Category Name</DialogTitle>
