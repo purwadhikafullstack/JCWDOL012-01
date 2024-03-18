@@ -113,10 +113,7 @@ export default function EditProduct({ id }: { id: string }) {
               setFiles={setFiles}
               setRemovedFiles={setRemovedFiles}
               imageId={product.images[0]?.id}
-              imageUrl={
-                product.images[0] &&
-                `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[0]?.url}`
-              }
+              imageUrl={product.images[0] && `${product.images[0]?.url}`}
             />
             <EditImage
               id="image-2"
@@ -124,10 +121,7 @@ export default function EditProduct({ id }: { id: string }) {
               setFiles={setFiles}
               setRemovedFiles={setRemovedFiles}
               imageId={product.images[1]?.id}
-              imageUrl={
-                product.images[1] &&
-                `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[1]?.url}`
-              }
+              imageUrl={product.images[1] && `${product.images[1]?.url}`}
             />
             <EditImage
               id="image-3"
@@ -135,10 +129,7 @@ export default function EditProduct({ id }: { id: string }) {
               setFiles={setFiles}
               setRemovedFiles={setRemovedFiles}
               imageId={product.images[2]?.id}
-              imageUrl={
-                product.images[2] &&
-                `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[2]?.url}`
-              }
+              imageUrl={product.images[2] && `${product.images[2]?.url}`}
             />
             <EditImage
               id="image-4"
@@ -146,10 +137,7 @@ export default function EditProduct({ id }: { id: string }) {
               setFiles={setFiles}
               setRemovedFiles={setRemovedFiles}
               imageId={product.images[3]?.id}
-              imageUrl={
-                product.images[3] &&
-                `${process.env.NEXT_PUBLIC_BASE_API}/${product.images[3]?.url}`
-              }
+              imageUrl={product.images[3] && `${product.images[3]?.url}`}
             />
           </div>
         </div>

@@ -164,4 +164,53 @@ export class ProductController {
       return next(error);
     }
   }
+
+  async updateProductById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { name, price, weight, category, description } = req.body;
+
+      const existingName = await prisma.product.findUnique({
+        where: { name, NOT: { id: Number(id) } }
+      });
+
+      if (existingName) {
+        return res.status(400).json({ success: false, message: 'Product name already exist' });
+      }
+
+      const product = await prisma.product.update({
+        where: { id: Number(id) },
+        data: {
+          name, price, weight, category: { connect: { name: category } }, description
+        }
+      });
+
+      return res.status(200).json({ success: true, results: product });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async updateProductImageById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { imageId } = req.params;
+
+      const file: any = req.file;
+
+      if (!file) {
+        return res.status(400).json({ success: false, message: 'No image uploaded' });
+      }
+
+      const image = await prisma.image.update({
+        where: { id: Number(imageId) },
+        data: {
+          url: process.env.BASE_URL + 'images/' + file?.filename
+        }
+      });
+
+      return res.status(200).json({ success: true, results: image });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }

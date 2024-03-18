@@ -19,6 +19,10 @@ export class ProductRouter {
       uploader('IMG', '/images').array('files', 3),
       this.productController.createProduct);
     this.router.delete('/:id', this.productController.deleteProductById);
+    this.router.put('/:id', this.productController.updateProductById);
+    this.router.patch('/image/:imageId',
+      uploader('IMG', '/images').single('file'),
+      this.productController.updateProductImageById);
   }
 
   getRouter() {
