@@ -10,6 +10,7 @@ import {
   UsersRound,
   ScrollText,
   NotebookPen,
+  Store,
 } from 'lucide-react';
 import { Button } from './ui/button';
 
@@ -43,7 +44,7 @@ const SideNavbar = (props: Props) => {
           },
           {
             title: 'Users',
-            href: '/users',
+            href: '/dashboard/users',
             icon: UsersRound,
             variant: 'ghost',
           },
@@ -57,6 +58,12 @@ const SideNavbar = (props: Props) => {
             title: 'Categories',
             href: '/dashboard/categories',
             icon: ScrollText,
+            variant: 'ghost',
+          },
+          {
+            title: 'Stores',
+            href: '/dashboard/stores',
+            icon: Store,
             variant: 'ghost',
           },
         ]}

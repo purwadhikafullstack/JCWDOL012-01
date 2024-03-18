@@ -13,6 +13,7 @@ export class StoreRouter {
 
   private initializeRoutes() {
     this.router.get('/find-nearest', this.storeController.getNearestStore);
+    this.router.get('/', this.storeController.getAllStores);
   }
 
   getRouter() {

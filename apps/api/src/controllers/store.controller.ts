@@ -54,4 +54,14 @@ export class StoreController {
       return next(error);
     }
   }
+
+  async getAllStores(req: Request, res: Response, next: NextFunction) {
+    try {
+      const stores = await prisma.store.findMany({ include: { product_inventories: true, user: true } });
+
+      return res.status(200).json({ success: true, results: stores });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
