@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 
 declare global {
@@ -15,15 +15,15 @@ export const verifyToken = async (
   next: NextFunction,
 ) => {
   try {
-    const token: any = req.header('Authorization')?.split(' ')[1];
-    if (token) {
+    const token = req.header('Authorization')?.split(' ')[1];
+    if (!token) {
       return res.status(400).send('Token not found');
     }
-    const verifyToken: any = verify(token, 'Secret123');
+    const verifiedToken: any = verify(token, 'secretkey');
 
-    req.dataUser = verifyToken;
+    req.dataUser = verifiedToken;
     next();
   } catch (error) {
-    return res.status(400).send('Token Error');
+    return res.status(400).send('Token error');
   }
 };
