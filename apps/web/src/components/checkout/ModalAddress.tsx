@@ -9,31 +9,37 @@ import {
 } from '@/components/ui/dialog';
 import { FaLocationDot } from 'react-icons/fa6';
 import { FaAngleDown } from 'react-icons/fa6';
-import useGetAddress from '@/hooks/useGetAddress';
 import { ListAddress } from './ListAddress';
 import { UserAddress } from '@/utils/addressTypes';
 import useUpdateAddress from '@/hooks/useUpdateAddress';
+import useGetAddress from '@/hooks/useGetAddress';
 
-export const CheckoutAddress = () => {
-  const { data, isLoading, isError } = useGetAddress();
+export const ModalAddress = () => {
+  const { data: dataAddress, isLoading, isError } = useGetAddress();
   const { mutate: updatePrimaryAddress, isPending } = useUpdateAddress();
   const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(
     null,
   );
 
   useEffect(() => {
-    if (!isLoading && !isError && data) {
-      const primaryAddresses = data.filter((address) => address.isPrimary);
+    if (!isLoading && !isError && dataAddress) {
+      const primaryAddresses = dataAddress.filter(
+        (address) => address.isPrimary,
+      );
       if (primaryAddresses.length > 0) {
         setSelectedAddress(primaryAddresses[0]);
       }
     }
-  }, [data]);
+  }, [dataAddress]);
 
   const handleAddressSelect = (address: UserAddress) => {
     setSelectedAddress(address);
     updatePrimaryAddress(address.id);
   };
+
+  if (!dataAddress) {
+    return null;
+  }
 
   return (
     <Dialog>
@@ -48,15 +54,15 @@ export const CheckoutAddress = () => {
           <FaAngleDown className="h-4 w-4" />
         </div>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="w-[80vh]">
         <DialogHeader>
           <DialogTitle>Pilih alamat pengiriman</DialogTitle>
         </DialogHeader>
         <DialogClose>
           <div className="flex flex-col mt-5 mb-5">
-            {data && data.length > 0 && (
+            {dataAddress && dataAddress.length > 0 && (
               <div className="flex flex-col gap-7">
-                {data.map((address) => (
+                {dataAddress.map((address) => (
                   <ListAddress
                     key={address.id}
                     userAddress={address}

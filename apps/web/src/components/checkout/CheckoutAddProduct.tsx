@@ -1,9 +1,14 @@
 import { FaPlus } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 export const CheckoutAddProduct = () => {
+  const router = useRouter();
   return (
     <div>
-      <button className="flex items-center p-3 border rounded-sm space-x-1">
+      <button
+        onClick={() => router.push('/')}
+        className="flex items-center p-3 border rounded-sm space-x-1"
+      >
         <FaPlus className="h-4 w-4" />
         <span>Tambah Pesanan Lagi</span>
       </button>

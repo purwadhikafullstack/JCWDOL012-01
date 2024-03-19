@@ -37,7 +37,7 @@ export const ModalVoucher = () => {
             </p>
           </div>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="w-[500px]">
           <DialogHeader>
             <DialogTitle>Pilih Voucher</DialogTitle>
           </DialogHeader>

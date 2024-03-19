@@ -1,12 +1,9 @@
 import { useCheckout } from '@/hooks/useCheckout';
 import { ModalPayment } from './ModalPayment';
 import { formatToRupiah } from '@/lib/formatToRupiah';
-import { useCart } from '@/provider/CartProvider';
-import { useState } from 'react';
 
 export const CheckoutTotalShipment = () => {
-  const { totalPrice, shippingCost } = useCheckout();
-  const { cart } = useCart();
+  const { totalPrice, shipment } = useCheckout();
 
   return (
     <div className="border p-5 flex flex-col gap-5 rounded-md bg-white">
@@ -16,9 +13,7 @@ export const CheckoutTotalShipment = () => {
       </div>
       <div className="flex justify-between text-gray-400">
         <span className="text-sm">Ongkos Kirim</span>
-        <span className="text-sm">
-          {formatToRupiah(shippingCost.shippingCost)}
-        </span>
+        <span className="text-sm">{formatToRupiah(shipment.amount)}</span>
       </div>
       <div className=" border-gray-400 border" />
       <div className="flex justify-between text-red-400">

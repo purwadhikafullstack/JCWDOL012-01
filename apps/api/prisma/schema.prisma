@@ -38,6 +38,7 @@ model User {
   stores             Store[]
   carts              Cart[]
   orders             Orders[]
+  payment            Payment[]
 }
 
 enum Role {
@@ -202,27 +203,22 @@ model Order_Item {
 }
 
 model Shipment {
-  id         Int           @id @default(autoincrement())
+  id         Int          @id @default(autoincrement())
   address_id Int
   store_id   Int
   amount     Decimal
-  type       Shipment_Type
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  address    User_Address  @relation(fields: [address_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  store      Store         @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type       String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  address    User_Address @relation(fields: [address_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  store      Store        @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   orders     Orders[]
-}
-
-enum Shipment_Type {
-  OKE
-  REG
-  YES
 }
 
 model Payment {
   id         Int            @id @default(autoincrement())
-  invoice    String         @unique
+  invoice    String
+  user_id    Int
   order_id   Int
   total      Decimal
   method     Payment_Method
@@ -232,6 +228,7 @@ model Payment {
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
   order      Orders         @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user       User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum Payment_Method {

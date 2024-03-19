@@ -26,6 +26,11 @@ export class CartRouter {
       verifyToken,
       this.cartController.deleteCart,
     );
+    this.router.delete(
+      '/delete',
+      verifyToken,
+      this.cartController.deleteAllCart,
+    );
   }
 
   getRouter(): Router {

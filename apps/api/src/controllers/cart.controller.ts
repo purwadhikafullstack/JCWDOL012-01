@@ -133,4 +133,18 @@ export class CartController {
       return res.status(500).json({ error: 'Internal Server error' });
     }
   }
+
+  async deleteAllCart(req: Request, res: Response) {
+    const dataUser = req.dataUser;
+    try {
+      const deleteCart = await prisma.cart.deleteMany({
+        where: { user_id: Number(dataUser.id) },
+      });
+
+      return res.status(204).send(deleteCart);
+    } catch (error) {
+      console.error('Error delete cart:', error);
+      return res.status(500).json({ error: 'Internal Server error' });
+    }
+  }
 }

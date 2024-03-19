@@ -7,11 +7,18 @@ import { UserAddress } from '@/utils/addressTypes';
 import useGetUser from '@/hooks/useGetUser';
 import useGetCart from '@/hooks/useGetCart';
 import useGetShipment from '@/hooks/useGetShipment';
-import { useCheckout } from '@/hooks/useCheckout';
+import { ModalChangeAddress } from './ModalChangeAddress';
 
-export const CheckoutShipment = () => {
-  const { data: shipmentCost } = useGetShipment();
-  const { data, isLoading, isError } = useGetAddress();
+interface CheckoutShipmentProps {
+  onReturnStep: () => void;
+}
+
+export const CheckoutShipment: React.FC<CheckoutShipmentProps> = ({
+  onReturnStep,
+}) => {
+  const [showModal, setShowModal] = useState(false);
+  const { data: dataShipment } = useGetShipment();
+  const { data: dataAddress, isLoading, isError } = useGetAddress();
   const { data: dataCart } = useGetCart();
   const { data: dataUser } = useGetUser();
   const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(
@@ -19,13 +26,15 @@ export const CheckoutShipment = () => {
   );
 
   useEffect(() => {
-    if (!isLoading && !isError && data) {
-      const primaryAddresses = data.filter((address) => address.isPrimary);
+    if (!isLoading && !isError && dataAddress) {
+      const primaryAddresses = dataAddress.filter(
+        (address) => address.isPrimary,
+      );
       if (primaryAddresses.length > 0) {
         setSelectedAddress(primaryAddresses[0]);
       }
     }
-  }, [data]);
+  }, [dataAddress]);
 
   return (
     <div>
@@ -35,7 +44,10 @@ export const CheckoutShipment = () => {
             <div className="bg-blue-100 pt-2 pb-5 px-5 text-black flex flex-col items-center gap-1 rounded-lg">
               <div className="flex justify-between w-full text-xs">
                 <p className="">Kirim ke:</p>
-                <button className=" font-bold text-blue-500">
+                <button
+                  onClick={() => setShowModal(true)}
+                  className=" font-bold text-blue-500"
+                >
                   Ganti Alamat {'>'}
                 </button>
               </div>
@@ -55,9 +67,9 @@ export const CheckoutShipment = () => {
             <div className="flex flex-col bg-white p-5 rounded-sm gap-3">
               <p className="font-bold text-base">Metode Pengiriman</p>
               <SelectShipment
-                shipmentOptions={shipmentCost?.shippingCost[0] ?? []}
-                addressId={shipmentCost?.addressId ?? 0}
-                storeId={shipmentCost?.storeId ?? 0}
+                shipmentOptions={dataShipment?.shippingCost[0] ?? []}
+                address_id={dataShipment?.addressId ?? 0}
+                store_id={dataShipment?.storeId ?? 0}
               />
               <div className="flex justify-between">
                 <p className="font-bold text-base">Pesanan</p>
@@ -85,6 +97,13 @@ export const CheckoutShipment = () => {
           </div>
         </div>
       </div>
+      {showModal && (
+        <ModalChangeAddress
+          showModal={showModal}
+          setShowModal={setShowModal}
+          onReturnStep={onReturnStep}
+        />
+      )}
     </div>
   );
 };

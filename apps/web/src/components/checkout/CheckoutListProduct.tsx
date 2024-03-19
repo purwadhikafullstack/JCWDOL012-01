@@ -1,7 +1,7 @@
 import { formatToRupiah } from '@/lib/formatToRupiah';
 import { CartItem } from '@/utils/cartTypes';
 import Image from 'next/image';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import ModalConfirmDelete from '../cart/ModalConfirmDelete';
 import { useCart } from '@/provider/CartProvider';

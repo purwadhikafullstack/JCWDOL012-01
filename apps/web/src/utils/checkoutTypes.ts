@@ -5,7 +5,7 @@ import { ShippingDetails } from './shipmentType';
 export interface CheckoutContextType {
   orderItems: CartItem[];
   voucher: string | null;
-  shippingCost: ShippingDetails;
+  shipment: ShippingDetails;
   paymentMethod: PaymentMethod;
   totalPrice: number;
   addOrderItems: (item: CartItem[]) => void;

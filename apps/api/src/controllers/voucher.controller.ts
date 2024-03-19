@@ -6,6 +6,7 @@ export class VoucherController {
   async getVoucher(req: Request, res: Response) {
     const dataUser = req.dataUser;
     try {
+      const now = new Date();
       const address = await prisma.user_Address.findFirst({
         where: { user_id: dataUser.id, isPrimary: true },
       });
@@ -33,7 +34,7 @@ export class VoucherController {
 
         const productIds = carts.map((cart) => cart.product_id);
 
-        const voucher = await prisma.voucher.findMany({
+        const vouchers = await prisma.voucher.findMany({
           where: {
             AND: [
               {
@@ -49,14 +50,20 @@ export class VoucherController {
                   },
                 ],
               },
+              {
+                expired_at: { gte: now },
+              },
+              {
+                limit_usage: { gt: 0 },
+              },
             ],
           },
         });
 
-        if (voucher.length === 0) {
+        if (vouchers.length === 0) {
           return res.status(400).json({ error: 'Voucher not found' });
         }
-        return res.status(200).send(voucher);
+        return res.status(200).send(vouchers);
       }
     } catch (error) {
       console.error('Error get voucher', error);

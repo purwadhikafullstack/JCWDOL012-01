@@ -6,17 +6,21 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useCheckout } from '@/hooks/useCheckout';
+import useTransaction from '@/hooks/useTransaction';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export const ModalPayment = () => {
-  const [selectedPayment, setSelectedPayment] = useState('Transfer Manual');
+  const router = useRouter();
+  const [selectedPayment, setSelectedPayment] = useState('Manual_Transfer');
+  const { mutate } = useTransaction();
   const {
     orderItems,
     paymentMethod,
     totalPrice,
     voucher,
-    shippingCost,
+    shipment,
     selectPaymentMethod,
   } = useCheckout();
 
@@ -27,14 +31,16 @@ export const ModalPayment = () => {
 
   const handlePayment = () => {
     const data = {
-      orderItems,
-      paymentMethod,
-      totalPrice,
-      voucher,
-      shippingCost,
+      orderDetails: {
+        products: orderItems,
+        total: totalPrice,
+        voucherId: voucher,
+      },
+      shipmentDetails: shipment,
+      paymentDetails: { method: paymentMethod },
     };
-
-    console.log(data);
+    mutate(data);
+    router.push('checkout/success');
   };
   return (
     <Dialog>
@@ -56,14 +62,14 @@ export const ModalPayment = () => {
             <label>
               <div
                 className={`flex p-3 rounded-lg border-2 items-center justify-between w-full ${
-                  selectedPayment === 'Transfer Manual' ? 'border-blue-500' : ''
+                  selectedPayment === 'Manual_Transfer' ? 'border-blue-500' : ''
                 }`}
               >
                 <div>Transfer Manual</div>
                 <input
                   type="radio"
-                  value="Transfer Manual"
-                  checked={selectedPayment === 'Transfer Manual'}
+                  value="Manual_Transfer"
+                  checked={selectedPayment === 'Manual_Transfer'}
                   onChange={handlePaymentChange}
                 />
               </div>

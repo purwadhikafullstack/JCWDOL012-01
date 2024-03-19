@@ -1,14 +1,38 @@
-import { Request, Response, text } from 'express';
+import { Request, Response } from 'express';
 import prisma from '@/prisma';
+import mysql from 'mysql2';
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'arashi48',
+  database: 'grocery',
+});
 
 export class TransactionController {
   async createTransaction(req: Request, res: Response) {
     const dataUser = req.dataUser;
     const { orderDetails, shipmentDetails, paymentDetails } = req.body;
-
     try {
       const transaction = await prisma.$transaction(async (tx) => {
-        let total = orderDetails.total + shipmentDetails.shippingCost;
+        for (const product of orderDetails.products) {
+          //Pengecekan Stok
+          const inventory = await tx.product_Inventory.findFirst({
+            where: {
+              product_id: product.product_id,
+              store_id: shipmentDetails.store_id,
+            },
+          });
+          if (!inventory || inventory.quantity < product.quantity) {
+            throw new Error(
+              `Stok tidak mencukupi untuk produk dengan ID ${product.product_id}`,
+            );
+          }
+        }
+
+        //Perhitungan total
+        let total = orderDetails.total;
+        // Pemakaian Voucher
         if (orderDetails.voucherId) {
           const voucher = await prisma.voucher.findUnique({
             where: {
@@ -16,57 +40,64 @@ export class TransactionController {
             },
           });
 
-          if (voucher) {
-            if (voucher.product_id) {
-              const product = orderDetails.products.find(
-                (product: { product_id: number }) =>
-                  product.product_id === voucher.product_id,
-              );
-
-              if (product) {
-                const initialTotal = orderDetails.total;
-
-                if (voucher.type === 'Amount') {
-                  product.unitPrice -= Number(voucher.amount);
-                } else if (voucher.type === 'Percentage') {
-                  const discount =
-                    (Number(voucher.amount) / 100) * product.unitPrice;
-                  product.unitPrice -= discount;
-                }
-
-                const updatedTotal = orderDetails.products.reduce(
-                  (
-                    acc: number,
-                    product: { unitPrice: number; quantity: number },
-                  ) => {
-                    return acc + product.unitPrice * product.quantity;
-                  },
-                  0,
-                );
-
-                orderDetails.total = updatedTotal;
-
-                orderDetails.total -= initialTotal - updatedTotal;
-              }
-            } else {
-              if (voucher.type === 'Amount') {
-                orderDetails.total -= Number(voucher.amount);
-              } else if (voucher.type === 'Percentage') {
-                const discount =
-                  (Number(voucher.amount) / 100) * orderDetails.total;
-                orderDetails.total -= discount;
-              }
-            }
+          if (!voucher) {
+            throw new Error(
+              `Voucher dengan ID ${orderDetails.voucherId} tidak ditemukan`,
+            );
           }
+          // Pengecekan apakah voucher sudah kedaluwarsa
+          if (voucher.expired_at <= new Date()) {
+            throw new Error('Voucher sudah kedaluwarsa');
+          }
+          let voucherDiscount = 0;
+          // Jika voucher terkait dengan produk tertentu
+          if (voucher.product_id) {
+            const product = orderDetails.products.find(
+              (product: { product_id: number }) =>
+                product.product_id === voucher.product_id,
+            );
+            if (!product) {
+              throw new Error(
+                `Produk dengan ID ${voucher.product_id} tidak ditemukan dalam keranjang`,
+              );
+            }
+            if (voucher.type === 'Amount') {
+              voucherDiscount = Number(voucher.amount);
+            } else if (voucher.type === 'Percentage') {
+              voucherDiscount =
+                (Number(voucher.amount) / 100) *
+                (product.price * product.quantity);
+            }
+            product.price -= voucherDiscount / product.quantity;
+            total -= voucherDiscount;
+          } else {
+            if (voucher.type === 'Amount') {
+              voucherDiscount = Number(voucher.amount);
+            } else if (voucher.type === 'Percentage') {
+              voucherDiscount = (Number(voucher.amount) / 100) * total;
+            }
+            total -= voucherDiscount;
+          }
+          await prisma.voucher.update({
+            where: {
+              id: orderDetails.voucherId,
+            },
+            data: {
+              limit_usage: {
+                decrement: 1,
+              },
+            },
+          });
         }
         total = Math.max(total, 0);
+        total += shipmentDetails.amount;
 
         const shipment = await tx.shipment.create({
           data: {
-            address_id: shipmentDetails.userAdressId,
-            store_id: shipmentDetails.storeId,
-            amount: shipmentDetails.shippingcost,
-            type: shipmentDetails.shipmentType,
+            address_id: shipmentDetails.address_id,
+            store_id: shipmentDetails.store_id,
+            type: shipmentDetails.type,
+            amount: Number(shipmentDetails.amount),
           },
         });
 
@@ -79,16 +110,21 @@ export class TransactionController {
           },
         });
 
+        let payment;
         if (paymentDetails.method === 'Payment_Gateway') {
-          // Jika metode pembayaran adalah 'Payment_Gateway', lakukan proses pembayaran melalui midtrans
-          // Misalnya, lakukan proses pembayaran ke Midtrans di sini
+          // Proses pembayaran melalui gateway pembayaran
         } else {
-          // Jika metode pembayaran adalah lainnya, buat entri pembayaran biasa
-          const now = new Date(); // Waktu saat ini
+          const now = new Date();
+          const formattedDate = now
+            .toISOString()
+            .slice(0, 10)
+            .replace(/-/g, '');
+          const invoiceNumber = `INV-${formattedDate}-${order.id}`;
           const expiredAt = new Date(now.getTime() + 60 * 60 * 1000);
-          const payment = await tx.payment.create({
+          payment = await tx.payment.create({
             data: {
-              invoice: '1234',
+              invoice: invoiceNumber,
+              user_id: dataUser.id,
               order_id: order.id,
               total: total,
               status: 'pending',
@@ -101,21 +137,21 @@ export class TransactionController {
           await tx.order_Item.create({
             data: {
               order_id: order.id,
-              product_id: product.productId,
-              store_id: product.storeId,
+              product_id: product.product_id,
+              store_id: shipmentDetails.store_id,
               quantity: product.quantity,
             },
           });
 
-          const inventory = await tx.product_inventory.findFirst({
+          const inventory = await tx.product_Inventory.findFirst({
             where: {
-              product_id: product.productId,
-              store_id: product.storeId,
+              product_id: product.product_id,
+              store_id: shipmentDetails.store_id,
             },
           });
 
           if (inventory) {
-            await tx.product_inventory.update({
+            await tx.product_Inventory.update({
               where: {
                 id: inventory.id,
               },
@@ -129,20 +165,81 @@ export class TransactionController {
             await tx.stocklog.create({
               data: {
                 inventory_id: inventory.id,
-                typeLog: 'Reduction', // Log untuk pengurangan stok
+                typeLog: 'Reduction',
               },
             });
           } else {
             throw new Error(
-              `Inventory not found for product ID ${product.productId} and store ID ${product.storeId}`,
+              `Inventory not found for product ID ${product.product_id} and store ID ${shipmentDetails.store_id}`,
             );
           }
         }
+        await tx.cart.deleteMany({
+          where: { user_id: dataUser.id },
+        });
+
+        return {
+          order: order,
+          payment: payment || null,
+        };
+      });
+
+      const newOrderId = transaction.order.id;
+      const newPaymentId = transaction.payment ? transaction.payment.id : null;
+
+      const createEventQuery = `
+      CREATE EVENT change_status_event_${newOrderId}
+      ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 10 SECOND
+      DO
+      BEGIN
+          -- Mengubah status pesanan menjadi 'Cancelled' jika masih 'Pending'
+          UPDATE orders 
+          SET status = 'Cancelled' 
+          WHERE status = 'Pending' AND id = ${newOrderId};
+
+          -- Mengubah status pembayaran menjadi 'Cancelled' jika masih 'Pending'
+          UPDATE payment 
+          SET status = 'Cancelled' 
+          WHERE status = 'Pending' AND id = ${newPaymentId};
+
+          -- Pengecekan status pesanan sebelum membuat entri log stok
+          IF (SELECT status FROM orders WHERE id = ${newOrderId}) = 'Cancelled' THEN
+                -- Mengembalikan quantity pada product_inventory jika pesanan dibatalkan
+                UPDATE product_inventory AS pi
+                SET pi.quantity = pi.quantity + (
+                  SELECT SUM(oi.quantity) 
+                  FROM order_item AS oi
+                  WHERE oi.product_id = pi.product_id
+                  AND oi.store_id = pi.store_id
+                  AND oi.order_id = ${newOrderId}
+                )
+                WHERE pi.product_id IN (
+                  SELECT DISTINCT oi.product_id 
+                  FROM order_item AS oi
+                  WHERE oi.order_id = ${newOrderId}
+                );
+              -- Buat entri log stok
+              INSERT INTO stocklog (inventory_id, typeLog, updatedAt)
+              SELECT pi.id, 'Addition', NOW()
+              FROM product_inventory AS pi
+              WHERE pi.product_id IN (${orderDetails.products
+                .map((product: { product_id: number }) => product.product_id)
+                .join(',')})
+              AND pi.store_id = ${shipmentDetails.store_id};
+          END IF;
+      END;`;
+
+      connection.query(createEventQuery, (err) => {
+        if (err) {
+          console.error('Error creating event scheduler:', err);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+        console.log('Event scheduler created successfully');
       });
 
       return res.status(200).json(transaction);
     } catch (error) {
-      console.error('Error fetching cart:', error);
+      console.error('Error creating transaction:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   }

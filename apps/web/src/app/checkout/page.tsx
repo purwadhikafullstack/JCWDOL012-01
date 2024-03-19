@@ -21,11 +21,11 @@ const Checkout = () => {
   };
 
   return (
-    <>
+    <div>
       <NavbarCheckout step={step} onReturnStep={handleReturnStep} />
       {step === 1 && <CheckoutProductSelection onNextStep={handleNextStep} />}
-      {step === 2 && <CheckoutShipment />}
-    </>
+      {step === 2 && <CheckoutShipment onReturnStep={handleReturnStep} />}
+    </div>
   );
 };
 

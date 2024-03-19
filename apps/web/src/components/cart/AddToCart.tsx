@@ -39,7 +39,7 @@ export const AddToCart = ({
         tambahkan ke keranjang
       </button>
       {!authModalOpen && (
-        <DialogContent>
+        <DialogContent className="sm:w-2xl">
           <DialogHeader>
             <DialogTitle>
               {cartStockModal ? 'Barang Berhasil Ditambahkan' : errorMessage}

@@ -17,6 +17,8 @@ import { ShipmentRouter } from './routers/shipment.router';
 import { VoucherRouter } from './routers/voucher.router';
 import { UserRouter } from './routers/user.router';
 import { TestingRouter } from './routers/testing.router';
+import { TransactionRouter } from './routers/transaction.router';
+import { PaymentRouter } from './routers/payment.router';
 
 export default class App {
   private app: Express;
@@ -66,6 +68,8 @@ export default class App {
     const voucherRouter = new VoucherRouter();
     const userRouter = new UserRouter();
     const testingRouter = new TestingRouter();
+    const transactionRouter = new TransactionRouter();
+    const paymentRouter = new PaymentRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
@@ -80,6 +84,8 @@ export default class App {
     this.app.use('/api/voucher', voucherRouter.getRouter());
     this.app.use('/api/user', userRouter.getRouter());
     this.app.use('/api/testing', testingRouter.getRouter());
+    this.app.use('/api/transaction', transactionRouter.getRouter());
+    this.app.use('/api/payment', paymentRouter.getRouter());
   }
 
   public start(): void {

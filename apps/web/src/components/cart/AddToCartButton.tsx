@@ -47,7 +47,7 @@ export const AddToCartButton = ({
           <span className="text-base">Keranjang</span>
         </DialogTrigger>
         {!authModalOpen && (
-          <DialogContent>
+          <DialogContent className="w-[400px]">
             <DialogHeader>
               <DialogTitle>
                 {cartStockModal ? 'Barang Berhasil Ditambahkan' : errorMessage}

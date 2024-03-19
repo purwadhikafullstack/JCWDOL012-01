@@ -12,14 +12,14 @@ const CheckoutContext = createContext<CheckoutContextType | undefined>(
 const CheckoutProvider = ({ children }: { children: React.ReactNode }) => {
   const [orderItems, setOrderItems] = useState<CartItem[]>([]);
   const [voucher, setVoucher] = useState<string | null>(null);
-  const [shippingCost, setShippingCost] = useState<ShippingDetails>({
-    addressId: 0,
-    storeId: 0,
-    shippingCost: 0,
-    shippingType: '',
+  const [shipment, setShipment] = useState<ShippingDetails>({
+    address_id: 0,
+    store_id: 0,
+    amount: 0,
+    type: '',
   });
   const [paymentMethod, setPaymentMethod] =
-    useState<PaymentMethod>('transfer_manual');
+    useState<PaymentMethod>('Manual_Transfer');
   const [totalPrice, setTotalPrice] = useState<number>(0);
 
   const addOrderItems = (items: CartItem[]) => {
@@ -48,8 +48,8 @@ const CheckoutProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const setShippingDetails = (details: ShippingDetails) => {
-    setShippingCost(details);
-    setTotalPrice(totalPrice + details.shippingCost);
+    setShipment(details);
+    setTotalPrice(totalPrice + details.amount);
   };
 
   const selectPaymentMethod = (method: PaymentMethod) => {
@@ -57,11 +57,11 @@ const CheckoutProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const resetShippingCost = () => {
-    setShippingCost({
-      addressId: 0,
-      storeId: 0,
-      shippingCost: 0,
-      shippingType: '',
+    setShipment({
+      address_id: 0,
+      store_id: 0,
+      amount: 0,
+      type: '',
     });
   };
 
@@ -70,7 +70,7 @@ const CheckoutProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         orderItems,
         voucher,
-        shippingCost,
+        shipment,
         paymentMethod,
         totalPrice,
         addOrderItems,

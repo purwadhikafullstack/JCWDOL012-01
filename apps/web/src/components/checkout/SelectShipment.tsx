@@ -6,12 +6,16 @@ import { useState } from 'react';
 
 interface Props {
   shipmentOptions: ShippingCost[];
-  addressId: number;
-  storeId: number;
+  address_id: number;
+  store_id: number;
 }
 
-export function SelectShipment({ shipmentOptions, addressId, storeId }: Props) {
-  const { setShippingDetails, shippingCost } = useCheckout();
+export function SelectShipment({
+  shipmentOptions,
+  address_id,
+  store_id,
+}: Props) {
+  const { setShippingDetails, shipment } = useCheckout();
   const [selectedOption, setSelectedOption] = useState('');
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -23,13 +27,13 @@ export function SelectShipment({ shipmentOptions, addressId, storeId }: Props) {
     if (selectedOption) {
       const { service, cost } = selectedOption;
       const { value: shippingCost } = cost[0];
-      const newShippingDetails: ShippingDetails = {
-        addressId,
-        storeId,
-        shippingCost,
-        shippingType: service,
+      const data = {
+        address_id,
+        store_id,
+        amount: shippingCost,
+        type: service,
       };
-      setShippingDetails(newShippingDetails);
+      setShippingDetails(data);
     }
   };
 
