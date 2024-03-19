@@ -48,10 +48,16 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: 'price',
     header: 'Price',
+    cell: ({row}) => {
+      return <span>Rp. {row.getValue('price')}</span>
+    }
   },
   {
     accessorKey: 'weight',
     header: 'Weight',
+    cell: ({row}) => {
+      return <span>{row.getValue('weight')} g</span>
+    }
   },
   {
     accessorKey: 'category',

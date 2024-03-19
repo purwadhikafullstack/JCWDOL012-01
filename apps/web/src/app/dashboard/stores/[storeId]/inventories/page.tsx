@@ -3,8 +3,8 @@
 import useStoreInventories from '@/hooks/useStoreInventories';
 import { DataTable } from './components/data-table';
 import { columns } from './components/columns';
-// import path from 'path';
-// import { promises as fs } from 'fs';
+import Link from 'next/link';
+import { ArrowLeftToLine, Store } from 'lucide-react';
 
 type Props = {
   params: {
@@ -12,16 +12,7 @@ type Props = {
   };
 };
 
-// async function getTasks() {
-//   const data = await fs.readFile(
-//     path.join('src/app/dashboard/stores/[storeId]/inventories/tasks.json'),
-//   );
-
-//   return JSON.parse(data.toString());
-// }
-
 export default function InventoryDashboard({ params: { storeId } }: Props) {
-  // const tasks = await getTasks();
   const { data, isLoading } = useStoreInventories({ id: storeId });
 
   if (isLoading) return <div>Loading...</div>;
@@ -39,17 +30,24 @@ export default function InventoryDashboard({ params: { storeId } }: Props) {
     };
   });
 
+  const storeLocation = `${data?.results?.products[0]?.store?.street}, ${data?.results?.products[0]?.store?.city}, ${data?.results?.products[0]?.store?.province}`;
+
   return (
     <>
       <div className="hidden w-1/2 h-full flex-1 flex-col space-y-8 p-8 md:flex">
-        {/* <div className="flex items-center justify-between space-y-2">
+        <Link href={`/dashboard/stores`}>
+          <ArrowLeftToLine className="w-4 h-4 cursor-pointer" />
+        </Link>
+        <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
+            <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+              <Store  />
+              {storeLocation}</h2>
             <p className="text-muted-foreground">
-              Here&apos;s a list of your tasks for this month!
+              Here&apos;s a list of products on this store!
             </p>
           </div>
-        </div> */}
+        </div>
         <DataTable data={inventories} columns={columns} />
       </div>
     </>
