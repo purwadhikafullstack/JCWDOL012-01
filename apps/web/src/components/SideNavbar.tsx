@@ -6,7 +6,6 @@ import { Nav } from './ui/nav';
 import {
   ChevronRight,
   LayoutDashboard,
-  ShoppingCart,
   UsersRound,
   ScrollText,
   NotebookPen,

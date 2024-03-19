@@ -95,7 +95,7 @@ export class InventoryController {
 
       let { page, perPage } = req.query;
       let skip = 0;
-      let take = 2;
+      let take = 5;
       if (perPage && !isNaN(Number(perPage))) {
         take = Number(perPage);
       }

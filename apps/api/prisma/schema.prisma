@@ -26,6 +26,7 @@ model User {
   stores             Store[]
   carts              Cart[]
   orders             Orders[]
+  Voucher            Voucher[]
 }
 
 enum Role {
@@ -130,24 +131,34 @@ enum StockLogType {
 }
 
 model Voucher {
-  id           Int           @id @default(autoincrement())
-  voucher_code String
-  product_id   Int?
-  store_id     Int
-  type         Discount_Type
-  amount       Decimal
-  limit_usage  Int
-  expired_at   DateTime
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  store        Store         @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  product      Product?      @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  orders       Orders[]
+  id            Int           @id @default(autoincrement())
+  voucher_code  String
+  product_id    Int?
+  store_id      Int?
+  user_id       Int?
+  type          Discount_Type
+  voucher_type  Voucher_Type
+  minimum_total Int?
+  amount        Decimal
+  limit_usage   Int
+  expired_at    DateTime
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  store         Store?        @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product       Product?      @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  orders        Orders[]
+  user          User?         @relation(fields: [user_id], references: [id])
 }
 
 enum Discount_Type {
   Amount
   Percentage
+}
+
+enum Voucher_Type {
+  Shipment
+  Bogo
+  Referral
 }
 
 model Cart {
