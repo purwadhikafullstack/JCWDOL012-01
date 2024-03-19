@@ -1,10 +1,10 @@
-// 'use client';
+'use client';
 
 import useStoreInventories from '@/hooks/useStoreInventories';
 import { DataTable } from './components/data-table';
 import { columns } from './components/columns';
-import path from 'path';
-import { promises as fs } from 'fs';
+// import path from 'path';
+// import { promises as fs } from 'fs';
 
 type Props = {
   params: {
@@ -12,16 +12,32 @@ type Props = {
   };
 };
 
-async function getTasks() {
-  const data = await fs.readFile(
-    path.join('src/app/dashboard/stores/[storeId]/inventories/tasks.json'),
-  );
+// async function getTasks() {
+//   const data = await fs.readFile(
+//     path.join('src/app/dashboard/stores/[storeId]/inventories/tasks.json'),
+//   );
 
-  return JSON.parse(data.toString());
-}
+//   return JSON.parse(data.toString());
+// }
 
-export default async function InventoryDashboard() {
-  const tasks = await getTasks();
+export default function InventoryDashboard({ params: { storeId } }: Props) {
+  // const tasks = await getTasks();
+  const { data, isLoading } = useStoreInventories({ id: storeId });
+
+  if (isLoading) return <div>Loading...</div>;
+
+  const inventories = data?.results?.products?.map((inventory: any) => {
+    return {
+      id: inventory?.id,
+      productId: inventory?.product?.id,
+      storeId: inventory?.store?.id,
+      name: inventory?.product?.name,
+      price: inventory?.product?.price,
+      quantity: inventory?.quantity,
+      createdAt: inventory?.createdAt,
+      updatedAt: inventory?.updatedAt,
+    };
+  });
 
   return (
     <>
@@ -34,7 +50,7 @@ export default async function InventoryDashboard() {
             </p>
           </div>
         </div> */}
-        <DataTable data={tasks} columns={columns} />
+        <DataTable data={inventories} columns={columns} />
       </div>
     </>
   );

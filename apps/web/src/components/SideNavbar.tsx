@@ -38,7 +38,7 @@ const SideNavbar = (props: Props) => {
         links={[
           {
             title: 'Dashboard',
-            href: '/dashboard',
+            href: '/dashboard/main',
             icon: LayoutDashboard,
             variant: 'default',
           },

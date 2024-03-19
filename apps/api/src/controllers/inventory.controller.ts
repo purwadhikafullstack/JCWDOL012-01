@@ -158,7 +158,7 @@ export class InventoryController {
         include: {
           product: true,
           store: true,
-          stocklogs: true,
+          stocklogs: {orderBy: {createdAt: "desc"}},
         }
       });
 
