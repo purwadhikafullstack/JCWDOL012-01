@@ -53,6 +53,7 @@ export class InventoryController {
           store_id: Number(storeId),
           product_id: productId,
           quantity,
+          stocklogs: { create: { typeLog: "Addition", quantity } }
         }
       });
 
@@ -157,6 +158,7 @@ export class InventoryController {
         include: {
           product: true,
           store: true,
+          stocklogs: true,
         }
       });
 
@@ -171,6 +173,74 @@ export class InventoryController {
         success: true,
         results: productInventory
       });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async addStockInventory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { storeId, productId } = req.params;
+      const { qty } = req.body;
+
+      const existingInventory = await prisma.product_Inventory.findFirst({
+        where: {
+          product_id: Number(productId),
+          store_id: Number(storeId),
+        }
+      });
+
+      if (!existingInventory) {
+        return res.status(400).json({ success: false, message: 'Inventory not found' });
+      }
+
+      const updatedInventory = await prisma.product_Inventory.update({
+        where: {
+          id: existingInventory.id
+        },
+        data: {
+          quantity: { increment: qty },
+          stocklogs: { create: { typeLog: "Addition", quantity: qty } }
+        }
+      });
+
+      return res.status(200).json({ success: true, results: updatedInventory });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async reduceStockInventory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { storeId, productId } = req.params;
+      const { qty } = req.body;
+
+      const existingInventory = await prisma.product_Inventory.findFirst({
+        where: {
+          product_id: Number(productId),
+          store_id: Number(storeId),
+        }
+      });
+
+      if (!existingInventory) {
+        return res.status(400).json({ success: false, message: 'Inventory not found' });
+      }
+
+      if (qty > existingInventory.quantity) {
+        return res.status(400).json({ success: false, message: 'Qty must be less than or equals to stock' });
+      }
+
+      const updatedInventory = await prisma.product_Inventory.update({
+        where: {
+          id: existingInventory.id
+        },
+        data: {
+          quantity: { decrement: qty },
+          stocklogs: { create: { typeLog: "Reduction", quantity: qty } }
+        }
+      });
+
+      return res.status(200).json({ success: true, results: updatedInventory });
     } catch (error) {
       return next(error);
     }

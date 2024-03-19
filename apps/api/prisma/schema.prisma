@@ -118,6 +118,7 @@ model Stocklog {
   id           Int               @id @default(autoincrement())
   inventory_id Int
   typeLog      StockLogType
+  quantity     Int
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
   inventory    Product_Inventory @relation(fields: [inventory_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
