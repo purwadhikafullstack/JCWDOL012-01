@@ -4,7 +4,9 @@ import useStoreInventories from '@/hooks/useStoreInventories';
 import { DataTable } from './components/data-table';
 import { columns } from './components/columns';
 import Link from 'next/link';
-import { ArrowLeftToLine, Store } from 'lucide-react';
+import { ArrowLeftToLine, PackagePlus, Store } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 type Props = {
   params: {
@@ -41,12 +43,20 @@ export default function InventoryDashboard({ params: { storeId } }: Props) {
         <div className="flex items-center justify-between space-y-2">
           <div>
             <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-              <Store  />
-              {storeLocation}</h2>
+              <Store />
+              {storeLocation}
+            </h2>
             <p className="text-muted-foreground">
               Here&apos;s a list of products on this store!
             </p>
           </div>
+          <Link
+            href={`/dashboard/stores/${storeId}/inventories/add`}
+            className={cn(buttonVariants(), 'flex items-center gap-2')}
+          >
+            <PackagePlus className="w-4 h-4" />
+            Add Product
+          </Link>
         </div>
         <DataTable data={inventories} columns={columns} />
       </div>

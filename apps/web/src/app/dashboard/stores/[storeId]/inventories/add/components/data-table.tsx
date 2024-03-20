@@ -1,6 +1,6 @@
-"use client"
+'use client';
 
-import * as React from "react"
+import * as React from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,7 +14,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from '@tanstack/react-table';
 
 import {
   Table,
@@ -23,27 +23,29 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from '@/components/ui/table';
 
-import { DataTablePagination } from "../components/data-table-pagination"
-import { DataTableToolbar } from "../components/data-table-toolbar"
+import { DataTablePagination } from '../components/data-table-pagination';
+import { DataTableToolbar } from '../components/data-table-toolbar';
+import { Button } from '@/components/ui/button';
+import AddProductToStore from '@/components/dashboard/AddProductToStore';
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
+    [],
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
     data,
@@ -65,9 +67,7 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
-
-  console.log(table.getRowModel())
+  });
 
   return (
     <div className="space-y-4">
@@ -84,26 +84,26 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
           </TableHeader>
-          {/* <TableBody>
-            {table.getRowModel()?.rows?.length ? (
-              table.getRowModel().rows?.map((row) => (
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -119,10 +119,11 @@ export function DataTable<TData, TValue>({
                 </TableCell>
               </TableRow>
             )}
-          </TableBody> */}
+          </TableBody>
         </Table>
       </div>
       <DataTablePagination table={table} />
+      <AddProductToStore table={table} />
     </div>
-  )
+  );
 }

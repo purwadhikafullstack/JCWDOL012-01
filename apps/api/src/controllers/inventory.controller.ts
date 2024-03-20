@@ -9,7 +9,6 @@ export class InventoryController {
       } = req.params;
       const {
         productId,
-        quantity,
       } = req.body;
 
       const existingStore = await prisma.store.findUnique({
@@ -52,8 +51,7 @@ export class InventoryController {
         data: {
           store_id: Number(storeId),
           product_id: productId,
-          quantity,
-          stocklogs: { create: { typeLog: "Addition", quantity } }
+          quantity: 0
         }
       });
 
@@ -117,7 +115,8 @@ export class InventoryController {
           createdAt: true,
           updatedAt: true,
           store: true
-        }
+        },
+        orderBy: {createdAt: 'desc'}
       });
 
       const totalProduct = await prisma.product_Inventory.count({

@@ -40,7 +40,7 @@ export function DataTableRowActions<TData>({
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem>
           <Link
-            href={`/dashboard/stores/${inventory?.storeId}/inventories/${inventory?.productId}`}
+            href={`/dashboard/stores/${inventory?.storeId}/inventories/${inventory?.id}`}
             className="flex items-center gap-2"
           >
             <History className="w-4 h-4" />
