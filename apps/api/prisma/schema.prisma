@@ -80,7 +80,6 @@ model Product {
   updatedAt           DateTime            @updatedAt
   category            Product_Category?   @relation(fields: [category_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   product_inventories Product_Inventory[]
-  vouchers            Voucher[]
   carts               Cart[]
   order_items         Order_Item[]
   images              Image[]
@@ -113,6 +112,7 @@ model Product_Inventory {
   store      Store      @relation(fields: [store_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   product    Product    @relation(fields: [product_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   stocklogs  Stocklog[]
+  vouchers   Voucher[]
 }
 
 model Stocklog {
@@ -131,23 +131,23 @@ enum StockLogType {
 }
 
 model Voucher {
-  id            Int           @id @default(autoincrement())
-  voucher_code  String
-  product_id    Int?
+  id            Int               @id @default(autoincrement())
+  voucher_code  String?
+  inventory_id  Int? 
   store_id      Int?
   user_id       Int?
-  type          Discount_Type
+  type          Discount_Type?
   voucher_type  Voucher_Type
   minimum_total Int?
-  amount        Decimal
+  amount        Decimal?
   limit_usage   Int
   expired_at    DateTime
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  store         Store?        @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  product       Product?      @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  store         Store?            @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  inventory     Product_Inventory? @relation(fields: [inventory_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   orders        Orders[]
-  user          User?         @relation(fields: [user_id], references: [id])
+  user          User?             @relation(fields: [user_id], references: [id])
 }
 
 enum Discount_Type {
@@ -158,6 +158,8 @@ enum Discount_Type {
 enum Voucher_Type {
   Shipment
   Bogo
+  Product
+  Transaction
   Referral
 }
 

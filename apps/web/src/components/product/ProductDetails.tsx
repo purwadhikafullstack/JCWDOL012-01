@@ -120,9 +120,9 @@ export default function ProductDetails({ storeId, productId }: Props) {
             <ScrollText />
             Category
           </p>
-          <p className="font-medium">
-            <Badge className='bg-blue-600'>{data?.results?.product?.category?.name}</Badge>
-          </p>
+          <Badge className="bg-blue-600 font-bold">
+            {data?.results?.product?.category?.name}
+          </Badge>
         </div>
         {/* description */}
         <div className="bg-white rounded-md p-4 space-y-4">

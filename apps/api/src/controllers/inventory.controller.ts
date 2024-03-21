@@ -161,6 +161,7 @@ export class InventoryController {
               category: true,
             }
           },
+          vouchers: true,
           store: true,
           stocklogs: { orderBy: { createdAt: "desc" } },
         }

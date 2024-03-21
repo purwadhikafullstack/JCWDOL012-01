@@ -14,6 +14,7 @@ import { CategoryRouter } from './routers/category.router';
 import { StoreRouter } from './routers/store.router';
 import { AuthRouter } from './routers/auth.router';
 import { CartRouter } from './routers/cart.router';
+import { VoucherRouter } from './routers/voucher.router';
 
 
 export default class App {
@@ -30,7 +31,7 @@ export default class App {
     this.app.use(cors());
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use(express.static('public'))
+    this.app.use(express.static('public'));
   }
 
   private handleError(): void {
@@ -62,19 +63,22 @@ export default class App {
     const productRouter = new ProductRouter();
     const categoryRouter = new CategoryRouter();
     const cartRouter = new CartRouter();
+    const voucherRouter = new VoucherRouter();
+    const authController = new AuthRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
-    const authController = new AuthRouter();
+
+    this.app.use(express.static('public'));
 
     this.app.use('/api/store', inventoryRouter.getRouter());
     this.app.use('/api/store', storeRouter.getRouter());
     this.app.use('/api/products', productRouter.getRouter());
     this.app.use('/api/categories', categoryRouter.getRouter());
     this.app.use('/auth', authController.getRouter());
-    this.app.use(express.static('public'));
     this.app.use('/api/cart', cartRouter.getRouter());
+    this.app.use('/api/vouchers', voucherRouter.getRouter());
   }
 
   public start(): void {

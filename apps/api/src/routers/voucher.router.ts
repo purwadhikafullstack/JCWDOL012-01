@@ -12,7 +12,9 @@ export class VoucherRouter {
   }
 
   private initializeRoutes() {
-    this.router.get('');
+    this.router.get('/', this.voucherController.getAllVouchers);
+    this.router.post('/bogo', this.voucherController.createBogo);
+    this.router.post('/product', this.voucherController.createProductDiscount);
   }
 
   getRouter() {
