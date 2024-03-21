@@ -1,10 +1,18 @@
 'use client';
 
 import useProductDetails from '@/hooks/useProductDetails';
-import { Store } from 'lucide-react';
+import { ScrollText, Store } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '../ui/button';
 import { useState } from 'react';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
+import { Badge } from '../ui/badge';
 
 type Props = {
   storeId: string;
@@ -29,14 +37,29 @@ export default function ProductDetails({ storeId, productId }: Props) {
       {/* image */}
       <div className="space-y-4">
         <div className="bg-white rounded-md">
-          <Image
-            src={
-              'https://excelso-coffee.com/wp-content/uploads/2020/07/excelso-Kalosi-Toraja-Biji-200g-2.jpg'
-            }
-            alt="product image"
-            width={400}
-            height={400}
-          />
+          <Carousel
+            opts={{
+              align: 'start',
+              loop: true,
+            }}
+          >
+            <CarouselContent>
+              {data?.results?.product?.images?.map((image: any, i: number) => {
+                return (
+                  <CarouselItem key={i}>
+                    <Image
+                      src={image?.url}
+                      alt="product image"
+                      width={400}
+                      height={400}
+                    />
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            {/* <CarouselPrevious />
+            <CarouselNext /> */}
+          </Carousel>
         </div>
         <div className="hidden lg:flex bg-white rounded-md p-4 items-center justify-start gap-4">
           <Store className="w-8 h-8" />
@@ -60,6 +83,7 @@ export default function ProductDetails({ storeId, productId }: Props) {
         {/* add to cart */}
         <div className="bg-white rounded-md p-4 flex gap-4 items-center">
           <Button
+            className="bg-blue-600"
             onClick={() => {
               if (quantity > 0) {
                 setQuantity((prev) => prev - 1);
@@ -72,6 +96,7 @@ export default function ProductDetails({ storeId, productId }: Props) {
             {quantity}
           </span>
           <Button
+            className="bg-blue-600"
             onClick={() => {
               if (quantity < data?.results.quantity) {
                 setQuantity((prev) => prev + 1);
@@ -80,7 +105,7 @@ export default function ProductDetails({ storeId, productId }: Props) {
           >
             +
           </Button>
-          <Button>Add to cart</Button>
+          <Button className="bg-blue-600">Add to cart</Button>
         </div>
         {/* store info */}
         <div className="lg:hidden bg-white rounded-md p-4 flex items-center justify-start gap-4">
@@ -89,12 +114,20 @@ export default function ProductDetails({ storeId, productId }: Props) {
             {data?.results.store.city}, {data?.results.store.province}
           </p>
         </div>
+        {/* category */}
+        <div className="bg-white rounded-md p-4 space-y-4">
+          <p className="text-xl font-semibold flex items-center gap-2">
+            <ScrollText />
+            Category
+          </p>
+          <p className="font-medium">
+            <Badge className='bg-blue-600'>{data?.results?.product?.category?.name}</Badge>
+          </p>
+        </div>
         {/* description */}
         <div className="bg-white rounded-md p-4 space-y-4">
           <p className="text-xl font-semibold">Description</p>
-          <p>
-            {data?.results.product.description} 
-          </p>
+          <p>{data?.results.product.description}</p>
         </div>
       </div>
     </div>

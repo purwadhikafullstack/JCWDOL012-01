@@ -116,7 +116,7 @@ export class InventoryController {
           updatedAt: true,
           store: true
         },
-        orderBy: {createdAt: 'desc'}
+        orderBy: { createdAt: 'desc' }
       });
 
       const totalProduct = await prisma.product_Inventory.count({
@@ -155,9 +155,14 @@ export class InventoryController {
           product_id: Number(productId)
         },
         include: {
-          product: true,
+          product: {
+            include: {
+              images: true,
+              category: true,
+            }
+          },
           store: true,
-          stocklogs: {orderBy: {createdAt: "desc"}},
+          stocklogs: { orderBy: { createdAt: "desc" } },
         }
       });
 

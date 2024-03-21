@@ -11,7 +11,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="z-50 fixed bg-blue-600 p-2 w-screen overflow-x-hidden overflow-y-auto">
+    <nav className="z-50 fixed bg-blue-600 top-0 p-2 w-screen overflow-x-hidden overflow-y-auto">
       {/* Navbar for desktop */}
       <div className="hidden md:flex justify-between items-center max-w-5xl mx-auto">
         <a href="/" className="text-white text-xl font-bold">
