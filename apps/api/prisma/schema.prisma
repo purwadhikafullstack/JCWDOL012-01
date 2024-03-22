@@ -134,15 +134,16 @@ enum StockLogType {
 model Promotion {
   id             Int               @id @default(autoincrement())
   inventory_id   Int
-  promotion_type Promotion_type
-  max_amount     Decimal?
-  percentage     Int?
+  promotion_type Promotion_Type
+  amount         Decimal?
+  discount_type  Discount_Type?
+  limit_usage    Int
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
   inventory      Product_Inventory @relation(fields: [inventory_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-enum Promotion_type {
+enum Promotion_Type {
   Bogo
   Discount
 }

@@ -32,18 +32,18 @@ export default function ProductDetails({ storeId, productId }: Props) {
     return <div>Loading...</div>;
   }
 
-  const checkBogo = data?.results?.vouchers?.find((voucher: any) => {
-    return voucher?.voucher_type == 'Bogo';
+  const checkBogo = data?.results?.promotions?.find((promotion: any) => {
+    return promotion?.promotion_type == 'Bogo';
   });
 
-  const checkDiscount = data?.results?.vouchers?.find((voucher: any) => {
-    return voucher?.voucher_type == 'Product';
+  const checkDiscount = data?.results?.promotions?.find((promotion: any) => {
+    return promotion?.promotion_type == 'Discount';
   });
 
   let price = data?.results.product.price;
 
   if (checkDiscount) {
-    if (checkDiscount?.type == 'Amount') {
+    if (checkDiscount?.discount_type == 'Amount') {
       price = price - checkDiscount?.amount;
     } else {
       price = price - (price * checkDiscount?.amount) / 100;
@@ -98,8 +98,8 @@ export default function ProductDetails({ storeId, productId }: Props) {
           )}
           <p className="text-xl font-semibold">{data?.results.product.name}</p>
           <div className="flex items-center gap-2 text-orange-500 text-2xl font-bold">
-          {checkDiscount && (
-              <Badge className='bg-red-500'>
+            {checkDiscount && (
+              <Badge className="bg-red-500">
                 <TicketPercent />
               </Badge>
             )}
@@ -107,7 +107,6 @@ export default function ProductDetails({ storeId, productId }: Props) {
               Rp. {data?.results.product.price}
             </span>
             {checkDiscount && <span>Rp. {price}</span>}
-            
           </div>
           <p className="text-slate-500 font-medium">
             (Stock Tersisa: {data?.results.quantity})
