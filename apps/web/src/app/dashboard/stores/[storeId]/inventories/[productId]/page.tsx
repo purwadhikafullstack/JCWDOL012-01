@@ -16,13 +16,17 @@ type Props = {
 export default function InventoryDetailsDashboard({
   params: { storeId, productId },
 }: Props) {
-  const { data, isLoading, isError } = useStoreInventoryDetails({ storeId, productId });
+  const { data, isLoading, isError } = useStoreInventoryDetails({
+    storeId,
+    productId,
+  });
 
   if (isLoading) return <div>Loading...</div>;
 
-  if (isError) return <div>Not Found</div>
-  
+  if (isError) return <div>Not Found</div>;
+
   const stockLogs = data?.results?.stocklogs?.map((stockLog: any) => {
+    console.log(stockLog);
     return {
       id: stockLog.id,
       inventoryId: data?.results?.id,
@@ -43,7 +47,8 @@ export default function InventoryDetailsDashboard({
           <div>
             <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
               <History />
-              Stock Logs</h2>
+              Stock Logs
+            </h2>
             <p className="text-muted-foreground">
               Here&apos;s a list of stock logs {data?.results?.product?.name}!
             </p>

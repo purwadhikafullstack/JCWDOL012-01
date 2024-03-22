@@ -67,7 +67,7 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
-  console.log(table.getRowModel())
+  console.log(data)
 
   return (
     <div className="space-y-4">
@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          {/* <TableBody>
+          <TableBody>
             {table.getRowModel()?.rows?.length ? (
               table.getRowModel().rows?.map((row) => (
                 <TableRow
@@ -119,7 +119,7 @@ export function DataTable<TData, TValue>({
                 </TableCell>
               </TableRow>
             )}
-          </TableBody> */}
+          </TableBody>
         </Table>
       </div>
       <DataTablePagination table={table} />

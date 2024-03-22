@@ -28,6 +28,8 @@ export default function DashboardCategories() {
 
   if (isLoading) return <div>Loading...</div>;
 
+  if (isError) return <div>Error while fetching data</div>
+
   const categories = data?.results.map((category: any) => ({
     id: category.id,
     name: category.name,

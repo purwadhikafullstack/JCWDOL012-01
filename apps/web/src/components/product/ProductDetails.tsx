@@ -1,7 +1,7 @@
 'use client';
 
 import useProductDetails from '@/hooks/useProductDetails';
-import { ScrollText, Store } from 'lucide-react';
+import { ScrollText, Store, TicketPercent } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '../ui/button';
 import { useState } from 'react';
@@ -30,6 +30,24 @@ export default function ProductDetails({ storeId, productId }: Props) {
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  const checkBogo = data?.results?.vouchers?.find((voucher: any) => {
+    return voucher?.voucher_type == 'Bogo';
+  });
+
+  const checkDiscount = data?.results?.vouchers?.find((voucher: any) => {
+    return voucher?.voucher_type == 'Product';
+  });
+
+  let price = data?.results.product.price;
+
+  if (checkDiscount) {
+    if (checkDiscount?.type == 'Amount') {
+      price = price - checkDiscount?.amount;
+    } else {
+      price = price - (price * checkDiscount?.amount) / 100;
+    }
   }
 
   return (
@@ -72,10 +90,25 @@ export default function ProductDetails({ storeId, productId }: Props) {
       <div className="space-y-2 lg:space-y-0 lg:flex lg:flex-col lg:gap-4 w-full">
         {/* name, price, stock */}
         <div className="bg-white rounded-md p-4 space-y-4">
+          {checkBogo && (
+            <Badge className="text-xl w-max bg-red-500 flex items-center gap-2">
+              <TicketPercent />
+              Buy 1 Get 1
+            </Badge>
+          )}
           <p className="text-xl font-semibold">{data?.results.product.name}</p>
-          <p className="text-orange-500 text-2xl font-bold">
-            Rp. {data?.results.product.price}
-          </p>
+          <div className="flex items-center gap-2 text-orange-500 text-2xl font-bold">
+          {checkDiscount && (
+              <Badge className='bg-red-500'>
+                <TicketPercent />
+              </Badge>
+            )}
+            <span className={checkDiscount && 'text-slate-400 line-through'}>
+              Rp. {data?.results.product.price}
+            </span>
+            {checkDiscount && <span>Rp. {price}</span>}
+            
+          </div>
           <p className="text-slate-500 font-medium">
             (Stock Tersisa: {data?.results.quantity})
           </p>
