@@ -7,6 +7,8 @@ import HeroSection from '@/components/HeroSection';
 import { CookiesProvider } from 'next-client-cookies/server';
 import QueryProvider from '@/provider/QueryProvider';
 import { CartProvider } from '@/provider/CartProvider';
+import DialogRegister from '@/components/DialogRegister';
+import DialogLogin from '@/components/DialogLogin';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,11 +25,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Header />
+        <DialogLogin />
+        <DialogRegister />
         <CookiesProvider>
           <QueryProvider>
             <CartProvider>{children}</CartProvider>
           </QueryProvider>
         </CookiesProvider>
+        <Footer />
       </body>
     </html>
   );

@@ -10,12 +10,13 @@ import cors from 'cors';
 import { PORT } from './config';
 import { AuthRouter } from './routers/auth.router';
 import { CartRouter } from './routers/cart.router';
-
+import dotenv from 'dotenv';
 
 export default class App {
   private app: Express;
 
   constructor() {
+    dotenv.config();
     this.app = express();
     this.configure();
     this.routes();
