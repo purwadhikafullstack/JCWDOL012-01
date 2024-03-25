@@ -30,7 +30,7 @@ export class AuthController {
           user_name: req.body.user_name,
           email: req.body.email,
           password: hashPassword,
-          role: req.body.role,
+          role: 'Customer',
         },
       });
       // response register user
@@ -59,7 +59,7 @@ export class AuthController {
           role: users.role,
           email: users.email,
         },
-        'Secret123',
+        process.env.JWT_SECRET as string,
       );
 
       // for compare password from database and request body password
@@ -113,6 +113,40 @@ export class AuthController {
         message: 'success',
       });
       // response status error
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async registerAdmin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { user_name, email, password, role } = req.body;
+      const existingUser = await prisma.user.findMany({ where: { OR: [{ email }, { user_name }] } });
+
+      if (existingUser?.length != 0) return res.status(400).json({ success: false, message: 'Email or username already exist' });
+
+      const salt = await genSalt(10);
+      const hashedPassword = await hash(password, salt);
+
+      const newAdmin = await prisma.user.create({
+        data: {
+          user_name,
+          email,
+          password: hashedPassword,
+          role
+        }
+      });
+
+      return res.status(201).json({ success: true, results: newAdmin });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async getUserFromToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req?.dataUser;
+      return res.status(200).json({ success: true, results: user });
     } catch (error) {
       next(error);
     }

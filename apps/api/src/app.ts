@@ -16,6 +16,7 @@ import { AuthRouter } from './routers/auth.router';
 import { CartRouter } from './routers/cart.router';
 import { VoucherRouter } from './routers/voucher.router';
 import { PromotionRouter } from './routers/promotion.router';
+import { UserRouter } from './routers/user.router';
 
 
 export default class App {
@@ -66,7 +67,8 @@ export default class App {
     const cartRouter = new CartRouter();
     const voucherRouter = new VoucherRouter();
     const promotionRouter = new PromotionRouter();
-    const authController = new AuthRouter();
+    const userRouter = new UserRouter();
+    const authRouter = new AuthRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
@@ -78,10 +80,11 @@ export default class App {
     this.app.use('/api/store', storeRouter.getRouter());
     this.app.use('/api/products', productRouter.getRouter());
     this.app.use('/api/categories', categoryRouter.getRouter());
-    this.app.use('/auth', authController.getRouter());
+    this.app.use('/api/auth', authRouter.getRouter());
     this.app.use('/api/cart', cartRouter.getRouter());
     this.app.use('/api/vouchers', voucherRouter.getRouter());
     this.app.use('/api/promotions', promotionRouter.getRouter());
+    this.app.use('/api/users', userRouter.getRouter());
   }
 
   public start(): void {
