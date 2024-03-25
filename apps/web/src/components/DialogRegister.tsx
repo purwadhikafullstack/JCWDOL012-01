@@ -13,16 +13,41 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../components/firebase/firebaseConfig';
-import Link from 'next/link';
 
-export default function DialogRegister() {
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/provider/userProvider';
+
+export default function DialogForm() {
   const { isOpenRegister, onCloseRegister } = useDialog();
-  // handle Google Provider
-  const handleGoogle = async (e: any) => {
-    const provider = new GoogleAuthProvider();
+  const { onOpenLogin, isProps, setIsProps } = useDialog();
+  const router = useRouter();
 
-    return signInWithPopup(auth, provider);
+  const { setUser } = useUser();
+
+  const handleGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    signIn(provider);
   };
+
+  const signIn = async (provider: any) => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      setUser(user);
+      console.log(user);
+      // router.push('/profile');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // // handle Google Provider
+  // const handleGoogle = async (e: any) => {
+  //   const provider = new GoogleAuthProvider();
+  //   signInWithPopup(auth, provider);
+  //   router.push('/');
+  // };
+
   return (
     <>
       <Dialog
@@ -33,10 +58,18 @@ export default function DialogRegister() {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex justify-center">Register</DialogTitle>
+            <DialogTitle className="flex justify-center">
+              {isProps ? 'Login' : 'Register'}
+            </DialogTitle>
             <DialogDescription className="flex justify-center">
               Sudah punya akun ?
-              <Link href="/src/components/DialogLogin">Masuk</Link>
+              <span
+                onClick={setIsProps}
+                className="text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+                title="Sign In"
+              >
+                {isProps ? 'Daftar' : 'Masuk'}
+              </span>
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -60,7 +93,7 @@ export default function DialogRegister() {
           <div className="flex justify-center">
             <DialogFooter>
               <Button className="bg-blue-500 px-24" type="submit">
-                Daftar
+                {isProps ? 'Masuk' : 'Daftar'}
               </Button>
             </DialogFooter>
           </div>

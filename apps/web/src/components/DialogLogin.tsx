@@ -16,6 +16,8 @@ import { auth } from '../components/firebase/firebaseConfig';
 
 export default function DialogLogin() {
   const { isOpenLogin, onCloseLogin } = useDialog();
+  const { onOpenRegister } = useDialog();
+
   // handle Google Provider
   const handleGoogle = async (e: any) => {
     const provider = new GoogleAuthProvider();
@@ -35,13 +37,13 @@ export default function DialogLogin() {
             <DialogTitle className="flex justify-center">Login</DialogTitle>
             <DialogDescription className="flex justify-center">
               Belum punya akun ?
-              <a
-                href="/src/components/DialogRegister"
-                className="text-blue-600 hover:text-blue-700 hover:underline"
+              <span
+                onClick={onOpenRegister}
+                className="text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
                 title="Sign In"
               >
                 Daftar
-              </a>
+              </span>
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

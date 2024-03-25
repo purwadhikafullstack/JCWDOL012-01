@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import prisma from '@/prisma';
 import { compare, genSalt, hash } from 'bcrypt';
-import { JsonWebTokenError, sign } from 'jsonwebtoken';
+import { sign } from 'jsonwebtoken';
 import { getEnv } from '@/helpers/environment';
+import { EmailData, sendMail } from '@/helpers/nodemailer';
 
 export class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
@@ -10,7 +11,7 @@ export class AuthController {
       const email: string = req.body.email;
 
       // existing User for email
-      const existingUser = await prisma.user.findMany({
+      const existingUser = await prisma.user.findFirst({
         where: {
           email: email,
         },
@@ -21,21 +22,23 @@ export class AuthController {
         throw new Error('Email is already exist');
       }
 
-      // // for gensalt sum password if used hashPassword
-      // const salt = await genSalt(10);
-      // // for hash password proccess
-      // const hashPassword = await hash(req.body.password, salt);
-
       // sign up account or new User
       const newUser = await prisma.user.create({
         data: {
           email: req.body.email,
           user_name: req.body.user_name,
-
-          // password: hashPassword,
-          // role: req.body.role,
         },
       });
+
+      // send email
+      const dataEmail: EmailData = {
+        from: 'Belanja NUsantara',
+        to: [newUser.email],
+        subject: 'Buat password untuk registrasi',
+        text: 'Hlaman Create Password',
+      };
+
+      await sendMail(dataEmail);
 
       // generate token register
       const registerToken = sign(
@@ -96,7 +99,6 @@ export class AuthController {
       const user = await prisma.user.findUniqueOrThrow({
         where: { email: req.body.email },
       });
-
       const password: any = user.password;
 
       // generate token
@@ -135,34 +137,29 @@ export class AuthController {
   // reset password
   async resetPassword(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log('huhuh');
       // find data user from email
-      const dataUser = req.body.dataUser;
-      const existingUser = await prisma.user.findFirstOrThrow({
-        where: { email: dataUser.email },
+      const { email, password } = req.body;
+      const checkingUser = await prisma.user.findFirst({
+        where: { email: email },
       });
-      // the password used hashpassword and find email
+
+      // the password used hash password and find email
       const salt = await genSalt(10);
       const hashPassword = await hash(req.body.password, salt);
       await prisma.user.update({
-        where: { email: existingUser.email },
+        where: { email: checkingUser?.email },
         data: { password: hashPassword },
       });
+
       // response status success
       return res.send({
         status: true,
-        message: 'success',
+        message: 'Success Reset Password',
       });
       // response status error
     } catch (error) {
       next(error);
     }
-  }
-
-  // logout user
-  async logoutUser(req: Request, res: Response, next: NextFunction) {
-    try {
-      // const dataUser = req.body.dataUser;
-      // cons
-    } catch (error) {}
   }
 }

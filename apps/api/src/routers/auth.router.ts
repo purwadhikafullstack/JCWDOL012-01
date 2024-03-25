@@ -13,13 +13,17 @@ export class AuthRouter {
   }
   private initializaRoutes(): void {
     this.router.post('/register', this.authController.registerUser);
-    this.router.post('/login', this.authController.loginUser);
     this.router.post(
       '/create-password',
       verifyToken,
       this.authController.createPassword,
     );
-    this.router.post('/logout', this.authController.logoutUser);
+    this.router.post('/login', this.authController.loginUser);
+    this.router.post(
+      '/reset-password',
+      verifyToken,
+      this.authController.resetPassword,
+    );
   }
   getRouter(): Router {
     return this.router;

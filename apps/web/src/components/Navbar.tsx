@@ -15,6 +15,8 @@ import { Label } from '@radix-ui/react-label';
 import { Input } from './ui/input';
 import { create } from 'zustand';
 import { useDialog } from '@/hooks/useDialog';
+import DialogRegister from './DialogRegister';
+import DialogLogin from './DialogLogin';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,10 +53,14 @@ const Navbar = () => {
             <a href="#" className="text-white">
               Cart
             </a>
-            <Button type="button" onClick={onOpenLogin} variant="outline">
+
+            <Button type="button" onClick={onOpenLogin} variant="link">
+              <DialogLogin />
               Login
             </Button>
-            <Button type="button" onClick={onOpenRegister} variant="outline">
+
+            <Button type="button" onClick={onOpenRegister} variant="link">
+              <DialogRegister />
               Sign Up
             </Button>
           </div>
