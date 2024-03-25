@@ -19,7 +19,7 @@ interface NavProps {
     title: string;
     label?: string;
     icon: LucideIcon;
-    variant: 'default' | 'ghost';
+    variant: 'default' | 'ghost' | string;
     href: string;
   }[];
 }

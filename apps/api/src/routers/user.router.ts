@@ -1,4 +1,5 @@
 import { UserController } from "@/controllers/user.controller";
+import { verifyStoreAdmin } from "@/middleware/verifyAdminStore";
 import { verifyToken } from "@/middleware/verifyJwt";
 import { verifySuperAdmin } from "@/middleware/verifySuperAdmin";
 import { Router } from "express";
@@ -15,7 +16,7 @@ export class UserRouter {
 
   private initializeRoutes() {
     this.router.get('/', verifyToken, verifySuperAdmin, this.userController.getAllUsers);
-    this.router.get('/:id', verifyToken, verifySuperAdmin, this.userController.getUserById);
+    this.router.get('/:id', verifyToken, verifyStoreAdmin, this.userController.getUserById);
     this.router.put('/:id', verifyToken, verifySuperAdmin, this.userController.updateUser);
     this.router.delete('/:id', verifyToken, verifySuperAdmin, this.userController.deleteUser);
   }

@@ -74,6 +74,7 @@ export class AuthController {
         id: users.id,
         user_name: users.user_name,
         email: users.email,
+        role: users.role,
         token: jwtToken,
       });
     } catch (error: any) {
@@ -145,7 +146,16 @@ export class AuthController {
 
   async getUserFromToken(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = req?.dataUser;
+      const user = await prisma.user.findUnique({
+        where: { id: req.dataUser.id },
+        include: {
+          stores: true,
+          carts: true,
+          orders: true,
+          user_Adresses: true,
+          Voucher: true,
+        }
+      });
       return res.status(200).json({ success: true, results: user });
     } catch (error) {
       next(error);
