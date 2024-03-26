@@ -27,18 +27,16 @@ export default function RootLayout({
       <body className={inter.className}>
         <CookiesProvider>
           <QueryProvider>
-            <UserProvider>
-              <SessionProvider>
-                <CartProvider>
-                  <ApplicationWrapper>
-                    <CheckoutProvider>
-                      {children}
-                      <Toaster />
-                    </CheckoutProvider>
-                  </ApplicationWrapper>
-                </CartProvider>
-              </SessionProvider>
-            </UserProvider>
+            <SessionProvider>
+              <CartProvider>
+                <ApplicationWrapper>
+                  <CheckoutProvider>
+                    {children}
+                    <Toaster />
+                  </CheckoutProvider>
+                </ApplicationWrapper>
+              </CartProvider>
+            </SessionProvider>
           </QueryProvider>
         </CookiesProvider>
       </body>

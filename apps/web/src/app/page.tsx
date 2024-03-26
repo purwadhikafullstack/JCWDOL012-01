@@ -25,7 +25,6 @@ interface Product {
 export default function Home() {
   const cookies = useCookies();
   const { onOpenLogin, onOpenRegister } = useDialog();
-  const { setUser, user } = useUser();
   const [product, setProduct] = useState<Product[] | null>(null);
   const { data, isLoading, error } = useQuery<Product[]>({
     queryKey: ['product'],
@@ -46,7 +45,6 @@ export default function Home() {
       <div className="wrapper">
         <button onClick={onOpenLogin}>open login</button>
         {/* <LocationComponent /> */}
-        <div>{user}</div>
         {data?.map((product) => (
           <div key={product.id}>
             <Link href={`/products/1/${product.id}`}>
