@@ -14,8 +14,6 @@ export default function StoreList() {
 
   if (isLoading || userLoading) return <div>Loading...</div>;
 
-  console.log(userData?.results?.stores);
-
   let stores;
 
   if (session?.role == 'Super_Admin') stores = data?.results;

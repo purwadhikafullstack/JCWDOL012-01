@@ -28,8 +28,8 @@ export default function DashboardCatalog() {
   }));
 
   return (
-    <div className="container mx-auto py-10 space-y-2">
-      <div className="flex items-center justify-between space-y-2">
+    <div className="hidden w-1/2 h-full flex-1 flex-col space-y-2 p-8 md:flex">
+      <div className="flex items-center justify-between">
         <div>
           <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             <Package />
@@ -39,17 +39,17 @@ export default function DashboardCatalog() {
             Here&apos;s a list of all product catalog, you can add into your
             store!
           </p>
+          {session?.role == 'Super_Admin' && (
+            <Button
+              className="flex gap-2 w-fit mt-4"
+              onClick={() => router.push('/dashboard/products/create')}
+            >
+              <CircleFadingPlus className="w-4 h-4" />
+              Create Product
+            </Button>
+          )}
         </div>
       </div>
-      {session?.role == 'Super_Admin' && (
-        <Button
-          className="flex gap-2"
-          onClick={() => router.push('/dashboard/products/create')}
-        >
-          <CircleFadingPlus className="w-4 h-4" />
-          Create Product
-        </Button>
-      )}
       <DataTable columns={columns} data={products} />
     </div>
   );

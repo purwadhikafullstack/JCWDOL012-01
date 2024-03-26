@@ -22,8 +22,8 @@ export default function DashboardCategories() {
   }));
 
   return (
-    <div className="container mx-auto py-10 space-y-2">
-      <div className="flex items-center justify-between space-y-2">
+    <div className="hidden w-1/2 h-full flex-1 flex-col space-y-2 p-8 md:flex">
+      <div className="flex items-center justify-between">
         <div>
           <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             <NotepadText />
@@ -32,9 +32,11 @@ export default function DashboardCategories() {
           <p className="text-muted-foreground">
             Here&apos;s a list of all categories!
           </p>
+          <div className="mt-4">
+            {session?.role == 'Super_Admin' && <CreateCategory />}
+          </div>
         </div>
       </div>
-      {session?.role == 'Super_Admin' && <CreateCategory />}
       <DataTable columns={columns} data={categories} />
     </div>
   );

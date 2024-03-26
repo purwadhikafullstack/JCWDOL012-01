@@ -1,6 +1,6 @@
 'use client';
 
-import { Cross2Icon, QuestionMarkCircledIcon } from '@radix-ui/react-icons';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
 
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { DataTableViewOptions } from './data-table-view-options';
 
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
-import { ArrowDownIcon, ArrowRightIcon, CircleIcon } from 'lucide-react';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -24,32 +23,36 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Filter inventories..."
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
+            table.getColumn('email')?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn('status') && (
+        {table.getColumn('role') && (
           <DataTableFacetedFilter
-            column={table.getColumn('status')}
-            title="Status"
-            options={[{
-              value: "backlog",
-              label: "Backlog",
-              icon: QuestionMarkCircledIcon,
-            },
-            {
-              value: "todo",
-              label: "Todo",
-              icon: CircleIcon,
-            },]}
+            column={table.getColumn('role')}
+            title="Role"
+            options={[
+              {
+                value: 'Customer',
+                label: 'Customer',
+              },
+              {
+                value: 'Store_Admin',
+                label: 'Store Admin',
+              },
+              {
+                value: 'Super_Admin',
+                label: 'Super Admin',
+              },
+            ]}
           />
         )}
-        {/* {table.getColumn('priority') && (
+        {/* {table.getColumn('email') && (
           <DataTableFacetedFilter
-            column={table.getColumn('priority')}
-            title="Priority"
+            column={table.getColumn('email')}
+            title="Email"
             options={[{
               label: "Low",
               value: "low",
