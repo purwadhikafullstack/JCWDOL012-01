@@ -16,6 +16,11 @@ export class OrderRouter {
 
   private initializeRoutes(): void {
     this.router.get('/', verifyToken, this.orderController.getOrder);
+    this.router.patch(
+      '/:orderId/cancel',
+      verifyToken,
+      this.orderController.cancelOrder,
+    );
   }
 
   getRouter(): Router {

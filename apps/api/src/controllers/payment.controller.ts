@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import prisma from '@/prisma';
 
 export class PaymentController {
@@ -19,7 +19,7 @@ export class PaymentController {
     }
   }
 
-  async updateStatusPayment(req: Request, res: Response) {
+  async UploadProofPayment(req: Request, res: Response) {
     const { paymentId } = req.params;
     try {
       if (!req.file) {
@@ -56,5 +56,34 @@ export class PaymentController {
       console.error('error update payment', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
+  }
+
+  async confirmPayment(req: Request, res: Response, next: NextFunction) {
+    const { paymentId } = req.params;
+    try {
+      const user = await prisma.user.findFirst({
+        where: { id: req.dataUser.id },
+      });
+      if (user?.role !== 'Store_Admin') {
+        return res
+          .status(400)
+          .json({ message: 'Unauthorized Access: Permission Denied' });
+      }
+      const payment = await prisma.payment.findFirst({
+        where: { id: Number(paymentId) },
+      });
+      if (!payment) {
+        return res.status(400).json({ error: 'Payment not Found' });
+      }
+      await prisma.payment.update({
+        where: { id: Number(paymentId) },
+        data: { status: 'Confirmed' },
+      });
+      await prisma.orders.update({
+        where: { id: payment.id },
+        data: { status: 'on_process' },
+      });
+      return res.status(200).json({ message: 'confirm payment success' });
+    } catch (error) {}
   }
 }

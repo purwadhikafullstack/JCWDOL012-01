@@ -43,11 +43,7 @@ export class ShipmentController {
 
         const nearestStoreId =
           nearestStores.length > 0 ? nearestStores[0].id : null;
-
-        // Array untuk menyimpan hasil estimasi biaya pengiriman dari setiap kurir
         const shipment = [];
-
-        // Panggil API RajaOngkir untuk setiap kurir yang diinginkan
         const couriers = ['jne', 'tiki'];
         for (const courier of couriers) {
           const response = await axios.post(

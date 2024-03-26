@@ -18,10 +18,10 @@ export class PaymentRouter {
   private initializeRoutes(): void {
     this.router.get('/', verifyToken, this.paymentController.getPayment);
     this.router.patch(
-      '/:paymentId',
+      '/:paymentId/payment-proof',
       verifyToken,
       proofPayment('IMG', '/images').single('file'),
-      this.paymentController.updateStatusPayment,
+      this.paymentController.UploadProofPayment,
     );
   }
 

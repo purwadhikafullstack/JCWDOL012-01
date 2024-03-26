@@ -25,7 +25,7 @@ const useUpdatePayment = () => {
       }
 
       const res = await axios.patch(
-        `http://localhost:8000/api/payment/${paymentId}`,
+        `http://localhost:8000/api/payment/${paymentId}/payment-proof`,
         formData,
         {
           headers: {

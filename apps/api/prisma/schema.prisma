@@ -226,7 +226,7 @@ model Payment {
   id            Int            @id @default(autoincrement())
   invoice       String
   user_id       Int
-  order_id      Int
+  order_id      Int            @unique
   total         Decimal
   method        Payment_Method
   status        Payment_Status
