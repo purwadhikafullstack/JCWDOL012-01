@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
+import { getEnv } from '@/helpers/environment';
 
 declare global {
   namespace Express {
@@ -19,7 +20,7 @@ export const verifyToken = async (
     if (!token) {
       return res.status(400).send('Token not found');
     }
-    const verifiedToken: any = verify(token, 'secretkey');
+    const verifiedToken: any = verify(token, getEnv(process.env.SECRET_KEY));
 
     req.dataUser = verifiedToken;
     next();

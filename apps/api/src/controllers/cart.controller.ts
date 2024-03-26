@@ -81,7 +81,7 @@ export class CartController {
           where: { id: item.product_id },
           include: {
             images: true,
-          }
+          },
         });
         const firstImage = Array.isArray(product?.images[0])
           ? product?.images[0]

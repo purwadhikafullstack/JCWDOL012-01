@@ -14,12 +14,13 @@ import { CategoryRouter } from './routers/category.router';
 import { StoreRouter } from './routers/store.router';
 import { AuthRouter } from './routers/auth.router';
 import { CartRouter } from './routers/cart.router';
-
+import dotenv from 'dotenv';
 
 export default class App {
   private app: Express;
 
   constructor() {
+    dotenv.config();
     this.app = express();
     this.configure();
     this.routes();
