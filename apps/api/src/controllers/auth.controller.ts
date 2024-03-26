@@ -137,7 +137,7 @@ export class AuthController {
   // reset password
   async resetPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log('huhuh');
+      // console.log('huhuh');
       // find data user from email
       const { email, password } = req.body;
       const checkingUser = await prisma.user.findFirst({

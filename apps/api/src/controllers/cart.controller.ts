@@ -25,7 +25,7 @@ export class CartController {
     const dataUser = req.dataUser;
     const { quantity, store_id, product_id } = req.body;
     try {
-      const stock = await prisma.product_inventory.findFirst({
+      const stock = await prisma.product_Inventory.findFirst({
         where: {
           product_id: Number(product_id),
           store_id: Number(store_id),
@@ -79,9 +79,12 @@ export class CartController {
       for (const item of cart) {
         const product = await prisma.product.findUnique({
           where: { id: item.product_id },
+          include: {
+            images: true,
+          },
         });
-        const firstImage = Array.isArray(product?.image)
-          ? product?.image[0]
+        const firstImage = Array.isArray(product?.images[0])
+          ? product?.images[0]
           : null;
         cartWithProduct.push({
           ...item,
