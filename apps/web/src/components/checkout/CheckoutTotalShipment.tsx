@@ -1,15 +1,17 @@
 import { useCheckout } from '@/hooks/useCheckout';
 import { ModalPayment } from './ModalPayment';
 import { formatToRupiah } from '@/lib/formatToRupiah';
+import { useCart } from '@/provider/CartProvider';
 
 export const CheckoutTotalShipment = () => {
   const { totalPrice, shipment } = useCheckout();
+  const { totalCart } = useCart();
 
   return (
     <div className="border p-5 flex flex-col gap-5 rounded-md bg-white">
       <div className="flex justify-between text-gray-400">
         <span className="text-sm">Total Harga Pesanan</span>
-        <span className="text-sm"></span>
+        <span className="text-sm">{formatToRupiah(totalCart)}</span>
       </div>
       <div className="flex justify-between text-gray-400">
         <span className="text-sm">Ongkos Kirim</span>

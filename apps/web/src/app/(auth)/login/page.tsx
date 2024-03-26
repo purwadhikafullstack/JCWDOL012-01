@@ -3,14 +3,21 @@ import axios from 'axios';
 import React, { useEffect } from 'react';
 import { useCookies } from 'next-client-cookies';
 import { useRouter } from 'next/navigation';
+import { useSession } from '@/provider/SessionProvider';
 import useGetCart from '@/hooks/useGetCart';
-import { useQueryClient } from '@tanstack/react-query';
+import { useCart } from '@/provider/CartProvider';
 
 const Login = () => {
   const router = useRouter();
   const cookies = useCookies();
-  const queryClient = useQueryClient();
-  const { refetch, data } = useGetCart();
+  // const { refetch } = useGetCart();
+  const { isUserLoggedIn, setIsUserLoggedIn } = useSession();
+
+  // useEffect(() => {
+  //   if (isUserLoggedIn) {
+  //     refetch();
+  //   }
+  // }, [isUserLoggedIn]);
 
   const handleLogin = async () => {
     try {
@@ -21,14 +28,10 @@ const Login = () => {
         },
       );
       const { token } = response.data;
-
       cookies.set('token', token);
-      console.log(token);
-
-      refetch();
-      console.log('Data setelah refetch:', data);
-
+      setIsUserLoggedIn(true);
       router.push('/');
+      console.log(token);
     } catch (error) {
       console.error('error login', error);
     }
@@ -36,6 +39,7 @@ const Login = () => {
 
   const handleSignout = () => {
     cookies.remove('token');
+    setIsUserLoggedIn(false);
   };
   return (
     <div className="flex flex-col gap-5 justify-center items-center h-screen">

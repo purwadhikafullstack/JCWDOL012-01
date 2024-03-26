@@ -31,7 +31,16 @@ export class TransactionController {
         }
 
         //Perhitungan total
-        let total = orderDetails.total;
+        let total = 0;
+        for (const product of orderDetails.products) {
+          const productData = await prisma.product.findUnique({
+            where: {
+              id: product.product_id,
+            },
+          });
+          const subtotal = Number(productData?.price) * product.quantity;
+          total += subtotal;
+        }
         // Pemakaian Voucher
         if (orderDetails.voucherId) {
           const voucher = await prisma.voucher.findUnique({
@@ -194,8 +203,8 @@ export class TransactionController {
       BEGIN
           -- Mengubah status pesanan menjadi 'Cancelled' jika masih 'Pending'
           UPDATE orders 
-          SET status = 'Cancelled' 
-          WHERE status = 'Pending' AND id = ${newOrderId};
+          SET status = 'cancelled' 
+          WHERE status = 'pending' AND id = ${newOrderId};
 
           -- Mengubah status pembayaran menjadi 'Cancelled' jika masih 'Pending'
           UPDATE payment 
@@ -210,7 +219,7 @@ export class TransactionController {
                   SELECT SUM(oi.quantity) 
                   FROM order_item AS oi
                   WHERE oi.product_id = pi.product_id
-                  AND oi.store_id = pi.store_id
+                  AND oi.store_id = ${shipmentDetails.store_id}
                   AND oi.order_id = ${newOrderId}
                 )
                 WHERE pi.product_id IN (
@@ -224,7 +233,7 @@ export class TransactionController {
               FROM product_inventory AS pi
               WHERE pi.product_id IN (${orderDetails.products
                 .map((product: { product_id: number }) => product.product_id)
-                .join(',')})
+                .join(',')}) 
               AND pi.store_id = ${shipmentDetails.store_id};
           END IF;
       END;`;

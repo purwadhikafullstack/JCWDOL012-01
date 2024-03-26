@@ -16,7 +16,7 @@ export const ListVoucher = ({
 
   useEffect(() => {
     setIsChecked(selectedVoucher?.id === voucher.id);
-  }, [selectedVoucher]);
+  }, [selectedVoucher, voucher.id]);
 
   const handleChange = () => {
     if (selectedVoucher && selectedVoucher.id === voucher.id) {

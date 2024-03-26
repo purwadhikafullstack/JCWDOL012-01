@@ -1,6 +1,8 @@
-import { AddressController } from '@/controllers/address.controller';
 import { PaymentController } from '@/controllers/payment.controller';
-import { verifyToken } from '@/middleware/verifyJwt';
+import { proofPayment } from '@/middleware/proofPayment';
+import { uploader } from '@/middleware/uploader';
+import { proofPaymentValidator } from '@/middleware/validator';
+import { verifyToken } from '@/middleware/verifyJWT';
 import { Router } from 'express';
 
 export class PaymentRouter {
@@ -18,6 +20,7 @@ export class PaymentRouter {
     this.router.patch(
       '/:paymentId',
       verifyToken,
+      proofPayment('IMG', '/images').single('file'),
       this.paymentController.updateStatusPayment,
     );
   }

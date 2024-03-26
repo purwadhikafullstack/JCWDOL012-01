@@ -1,6 +1,4 @@
 import { AuthController } from '@/controllers/auth.controller';
-import { verifyToken } from '@/middleware/verifyJwt';
-
 import { Router } from 'express';
 
 export class AuthRouter {

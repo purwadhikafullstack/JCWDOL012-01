@@ -17,6 +17,7 @@ export interface ShippingCostResponse {
 export interface ShippingDetails {
   address_id: number;
   store_id: number;
+  courier: string;
   amount: number;
   type: string;
 }

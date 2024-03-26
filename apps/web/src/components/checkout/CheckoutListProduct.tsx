@@ -31,18 +31,17 @@ export const CheckoutListProduct = ({ cartItem }: Props) => {
     }
   };
   return (
-    <div className="border py-2 px-5 bg-white">
-      <div className="flex justify-between items-center">
-        <div className="flex gap-5 w-96">
+    <div className="border py-2 px-2 sm:px-5 bg-white">
+      <div className="flex justify-between">
+        <div className="flex sm:gap-5 w-[500px]">
           <Image src={cartItem.image} alt="imgproduct" height={70} width={70} />
-          <div className="flex justify-start items-center">
-            <p className="text-sm font-semibold">{cartItem.name}</p>
+          <div className="flex flex-col sm:flex-row  justify-center sm:justify-between w-full items-start sm:items-center">
+            <p className=" text-sm font-semibold">{cartItem.name}</p>
+            <p>{formatToRupiah(Number(cartItem.price))}</p>
           </div>
         </div>
-        <div className="flex justify-center w-24">
-          <p>{formatToRupiah(Number(cartItem.price))}</p>
-        </div>
-        <div className="flex w-32 justify-between">
+
+        <div className="flex w-32 gap-1 justify-center  items-center">
           <button
             onClick={() => handleUpdateCart(-1)}
             disabled={isPending}
@@ -50,7 +49,7 @@ export const CheckoutListProduct = ({ cartItem }: Props) => {
           >
             -
           </button>
-          <span className="border-b px-5">{cartItem.quantity}</span>
+          <span className="border-b w-10 text-center">{cartItem.quantity}</span>
           <button
             onClick={() => handleUpdateCart(1)}
             disabled={isPending}
@@ -59,11 +58,9 @@ export const CheckoutListProduct = ({ cartItem }: Props) => {
             +
           </button>
         </div>
-        <div className="flex justify-center w-24">
+        <div className="flex flex-col sm:flex-row items-end justify-between mt-6 sm:mt-0 sm:items-center w-52 sm:w-32 gap-0 sm:gap-5">
           <p>{formatToRupiah(Number(cartItem.price) * cartItem.quantity)}</p>
-        </div>
-        <div>
-          <button onClick={handleDeleteCart}>
+          <button onClick={handleDeleteCart} className="">
             <FaTrashCan className="text-red-500" />
           </button>
         </div>

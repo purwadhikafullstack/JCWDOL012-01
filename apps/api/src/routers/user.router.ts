@@ -1,6 +1,5 @@
-import { CartController } from '@/controllers/cart.controller';
 import { UserController } from '@/controllers/user.controller';
-import { verifyToken } from '@/middleware/verifyJwt';
+import { verifyToken } from '@/middleware/verifyJWT';
 import { Router } from 'express';
 
 export class UserRouter {

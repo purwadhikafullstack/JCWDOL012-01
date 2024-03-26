@@ -1,13 +1,9 @@
 'use client';
 import { TiShoppingCart } from 'react-icons/ti';
 import { CartListProduct } from './CartListProduct';
-import { useEffect, useMemo, useState } from 'react';
-import { AuthModal } from '../AuthModal';
-import { useCookies } from 'next-client-cookies';
 import { BsCartX } from 'react-icons/bs';
 import { CheckoutButton } from './CheckoutButton';
 import { useCart } from '@/provider/CartProvider';
-import useGetCart from '@/hooks/useGetCart';
 import {
   Sheet,
   SheetContent,
@@ -15,46 +11,44 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { useSession } from '@/provider/SessionProvider';
+import { useDialog } from '@/hooks/useDialog';
+import DialogForm from '../DialogRegister';
+import DialogLogin from '../DialogLogin';
+import { useState } from 'react';
 
 export const CartButton = () => {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const { cart } = useCart();
-  useGetCart();
-  const cookies = useCookies();
-  const token = cookies.get('token');
-
-  useEffect(() => {
-    if (token) {
-      setIsUserLoggedIn(true);
-    }
-  }, [token]);
-
-  const totalCartPrice = useMemo(() => {
-    return cart.reduce(
-      (total, item) => total + Number(item.price) * item.quantity,
-      0,
-    );
-  }, [cart]);
+  const { isUserLoggedIn } = useSession();
+  const { onOpenLogin } = useDialog();
+  const { cart, totalCart } = useCart();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSheetTrigger = () => {
     if (!isUserLoggedIn) {
-      setAuthModalOpen(true);
+      onOpenLogin();
+      return setIsOpen(false);
     }
+    return setIsOpen(true);
   };
 
   return (
-    <Sheet>
-      <SheetTrigger asChild onClick={handleSheetTrigger}>
-        <div className="flex relative">
-          <TiShoppingCart className="h-6 w-6 cursor-pointer" />
-          {isUserLoggedIn && (
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <div className="flex relative">
+        <TiShoppingCart
+          onClick={handleSheetTrigger}
+          className="h-6 w-6 cursor-pointer"
+        />
+        {isUserLoggedIn &&
+          (cart.length > 0 ? (
             <div className="absolute top-0 left-6 w-4 h-4 bg-red-500 rounded-sm flex items-center justify-center text-white text-xs">
-              {cart?.reduce((total, item) => total + item.quantity, 0) ?? 0}
+              {cart.reduce((total, item) => total + item.quantity, 0)}
             </div>
-          )}
-        </div>
-      </SheetTrigger>
+          ) : (
+            <div className="absolute top-0 left-6 w-4 h-4 bg-red-500 rounded-sm flex items-center justify-center text-white text-xs">
+              0
+            </div>
+          ))}
+      </div>
       {isUserLoggedIn && (
         <SheetContent style={{ overflowY: 'auto' }}>
           <SheetHeader>
@@ -71,7 +65,7 @@ export const CartButton = () => {
             )}
           </div>
           {cart && cart.length > 0 ? (
-            <CheckoutButton totalCartPrice={totalCartPrice} />
+            <CheckoutButton totalCartPrice={totalCart} />
           ) : (
             <div className="flex flex-col justify-center items-center gap-5">
               <BsCartX className="h-56 w-56" />
@@ -83,7 +77,6 @@ export const CartButton = () => {
           )}
         </SheetContent>
       )}
-      {authModalOpen && <AuthModal />}
     </Sheet>
   );
 };

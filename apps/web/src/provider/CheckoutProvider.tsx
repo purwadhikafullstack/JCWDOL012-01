@@ -4,43 +4,33 @@ import { CheckoutContextType } from '@/utils/checkoutTypes';
 import { PaymentMethod } from '@/utils/paymentTypes';
 import { ShippingDetails } from '@/utils/shipmentType';
 import React, { createContext, useState, ReactNode } from 'react';
+import { useCart } from './CartProvider';
 
 const CheckoutContext = createContext<CheckoutContextType | undefined>(
   undefined,
 );
 
 const CheckoutProvider = ({ children }: { children: React.ReactNode }) => {
+  const { totalCart, cart } = useCart();
   const [orderItems, setOrderItems] = useState<CartItem[]>([]);
   const [voucher, setVoucher] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] =
+    useState<PaymentMethod>('Transfer_Manual');
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   const [shipment, setShipment] = useState<ShippingDetails>({
     address_id: 0,
     store_id: 0,
     amount: 0,
     type: '',
+    courier: '',
   });
-  const [paymentMethod, setPaymentMethod] =
-    useState<PaymentMethod>('Manual_Transfer');
-  const [totalPrice, setTotalPrice] = useState<number>(0);
 
   const addOrderItems = (items: CartItem[]) => {
     setOrderItems(items);
-    const newTotalPrice = items.reduce(
-      (total, item) => total + parseFloat(item.price) * item.quantity,
-      0,
-    );
-    setTotalPrice(newTotalPrice);
-  };
-
-  const removeOrderItem = (index: number) => {
-    const removedItem = orderItems[index];
-    const updatedItems = orderItems.filter((_, i) => i !== index);
-    setOrderItems(updatedItems);
-    setTotalPrice(totalPrice - parseFloat(removedItem.price));
-  };
-
-  const clearOrderItems = () => {
-    setOrderItems([]);
-    setTotalPrice(0);
+    if (!Array.isArray(items) || items.length === 0) {
+      return 0;
+    }
+    setTotalPrice(totalCart);
   };
 
   const applyVoucher = (voucherId: string) => {
@@ -49,7 +39,7 @@ const CheckoutProvider = ({ children }: { children: React.ReactNode }) => {
 
   const setShippingDetails = (details: ShippingDetails) => {
     setShipment(details);
-    setTotalPrice(totalPrice + details.amount);
+    setTotalPrice(totalCart + details.amount);
   };
 
   const selectPaymentMethod = (method: PaymentMethod) => {
@@ -62,6 +52,7 @@ const CheckoutProvider = ({ children }: { children: React.ReactNode }) => {
       store_id: 0,
       amount: 0,
       type: '',
+      courier: '',
     });
   };
 
@@ -74,8 +65,6 @@ const CheckoutProvider = ({ children }: { children: React.ReactNode }) => {
         paymentMethod,
         totalPrice,
         addOrderItems,
-        removeOrderItem,
-        clearOrderItems,
         applyVoucher,
         setShippingDetails,
         selectPaymentMethod,

@@ -1,5 +1,5 @@
 export type PaymentMethod =
-  | 'Manual_Transfer'
+  | 'Transfer_Manual'
   | 'va_mandiri'
   | 'va_bca'
   | 'va_bri';

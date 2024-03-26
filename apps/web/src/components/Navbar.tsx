@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import { CartButton } from './cart/CartButton';
 import Link from 'next/link';
-import { useCookies } from 'next-client-cookies/dist';
+import DialogLogin from './DialogLogin';
+import DialogForm from './DialogRegister';
 
 export const Navbar = () => {
   return (
@@ -16,6 +16,8 @@ export const Navbar = () => {
             <h1>Login</h1>
           </Link>
         </div>
+        <DialogForm />
+        <DialogLogin />
       </div>
     </nav>
   );

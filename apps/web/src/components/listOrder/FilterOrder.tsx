@@ -1,7 +1,4 @@
 'use client';
-
-import * as React from 'react';
-
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -11,14 +8,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
-export function FilterOrder() {
-  const [filter, setFilter] = React.useState('Semua Pesanan');
+export function FilterOrder({ status }: { status: string }) {
+  const [filter, setFilter] = useState('All Order');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
-  const handleFilterChange = (event: any) => {
-    setFilter(event.target.value);
-  };
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (filter && filter !== 'All Order') {
+      params.set('status', filter);
+      params.delete('page');
+    } else {
+      params.delete('status');
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  }, [filter, pathname, router, searchParams]);
 
   return (
     <DropdownMenu>
@@ -34,21 +43,23 @@ export function FilterOrder() {
       <DropdownMenuContent className="w-60">
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup value={filter} onValueChange={setFilter}>
-          <DropdownMenuRadioItem value="Semua Pesanan">
-            Semua Pesanan
+          <DropdownMenuRadioItem value="All Order">
+            All Order
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="Menunggu Pembayaran">
-            Menunggu Pembayaran
+          <DropdownMenuRadioItem value="pending">pending</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="confirmation">
+            confirmation
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="Konfirmasi">
-            Konfirmasi
+          <DropdownMenuRadioItem value="on_process">
+            on_process
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="Proses">Proses</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="Kirim">Kirim</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="Berhasil">
-            Berhasil
+          <DropdownMenuRadioItem value="shipped">shipped</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="confirmed">
+            confirmed
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="Gagal">Gagal</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="cancelled">
+            cancelled
+          </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

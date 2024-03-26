@@ -1,5 +1,6 @@
 import { CartController } from '@/controllers/cart.controller';
-import { verifyToken } from '@/middleware/verifyJwt';
+import { verifyToken } from '@/middleware/verifyJWT';
+
 import { Router } from 'express';
 
 export class CartRouter {
@@ -13,7 +14,6 @@ export class CartRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.get('/count', verifyToken, this.cartController.getCountCart);
     this.router.get('/', verifyToken, this.cartController.getCart);
     this.router.patch(
       '/:cartId/quantity',

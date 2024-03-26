@@ -8,6 +8,7 @@ import { RiDeleteBinLine } from 'react-icons/ri';
 import ModalConfirmDelete from './ModalConfirmDelete';
 import { formatToRupiah } from '@/lib/formatToRupiah';
 import useDeleteCart from '@/hooks/useDeleteCart';
+import { toast } from '../ui/use-toast';
 
 interface Props {
   cartItem: CartItem;
@@ -28,7 +29,18 @@ export const CartListProduct = ({ cartItem }: Props) => {
     if (cartItem.quantity + quantity === 0) {
       setConfirmDelete(true);
     } else {
-      mutate({ cartId, quantity });
+      mutate(
+        { cartId, quantity },
+        {
+          onError: (res: any) => {
+            toast({
+              variant: 'destructive',
+              title: `${res?.response?.data?.message}`,
+              description: `Produk ${res?.response?.data?.result?.product.name} sisa stok tinggal ${res?.response?.data?.result?.quantity}`,
+            });
+          },
+        },
+      );
     }
   };
 

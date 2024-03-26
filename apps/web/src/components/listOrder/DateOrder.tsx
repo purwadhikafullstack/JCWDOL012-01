@@ -13,12 +13,19 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { PopoverClose } from '@radix-ui/react-popover';
+import { useRouter } from 'next/navigation';
 
 export function DateOrder() {
+  const router = useRouter();
   const [date, setDate] = React.useState<Date>();
+  const [selected, setSelected] = React.useState<Date>();
 
   const handleApplyDate = () => {
-    setDate(date);
+    if (date) {
+      setSelected(date);
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      router.push(`/customer/order?date=${formattedDate}`);
+    }
   };
 
   const handleResetDate = () => {

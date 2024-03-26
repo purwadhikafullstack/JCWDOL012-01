@@ -1,5 +1,5 @@
 import { AddressController } from '@/controllers/address.controller';
-import { verifyToken } from '@/middleware/verifyJwt';
+import { verifyToken } from '@/middleware/verifyJWT';
 import { Router } from 'express';
 
 export class AddressRouter {

@@ -1,5 +1,5 @@
 import { VoucherController } from '@/controllers/voucher.controller';
-import { verifyToken } from '@/middleware/verifyJwt';
+import { verifyToken } from '@/middleware/verifyJWT';
 import { Router } from 'express';
 
 export class VoucherRouter {

@@ -22,6 +22,10 @@ export class PaymentController {
   async updateStatusPayment(req: Request, res: Response) {
     const { paymentId } = req.params;
     try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'No image uploaded' });
+      }
+
       const payment = await prisma.payment.findFirst({
         where: { id: Number(paymentId) },
       });
@@ -32,17 +36,22 @@ export class PaymentController {
         return res.status(400).json({ error: 'Payment expired' });
       }
       await prisma.$transaction(async (tx) => {
-        const updateStatusPayment = await tx.payment.update({
+        await tx.payment.update({
           where: { id: Number(paymentId) },
-          data: { status: 'Confirmation' },
+          data: {
+            status: 'Confirmation',
+            proof_payment: req.file?.filename,
+          },
         });
-        const updateStatusOrder = await tx.orders.update({
+        await tx.orders.update({
           where: { id: payment.order_id },
-          data: { status: 'Confirmation' },
+          data: { status: 'confirmation' },
         });
       });
 
-      return res.status(200).send('Success');
+      return res
+        .status(200)
+        .send({ success: true, message: 'success update payment' });
     } catch (error) {
       console.error('error update payment', error);
       return res.status(500).json({ error: 'Internal server error' });

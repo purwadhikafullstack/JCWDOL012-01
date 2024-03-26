@@ -10,11 +10,14 @@ import useTransaction from '@/hooks/useTransaction';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import useGetShipment from '@/hooks/useGetShipment';
+import LoadingPage from '../LoadingPage';
 
 export const ModalPayment = () => {
   const router = useRouter();
-  const [selectedPayment, setSelectedPayment] = useState('Manual_Transfer');
+  const [selectedPayment, setSelectedPayment] = useState('Transfer_Manual');
   const { mutate } = useTransaction();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     orderItems,
     paymentMethod,
@@ -29,7 +32,7 @@ export const ModalPayment = () => {
     selectPaymentMethod(event.target.value);
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     const data = {
       orderDetails: {
         products: orderItems,
@@ -40,16 +43,17 @@ export const ModalPayment = () => {
       paymentDetails: { method: paymentMethod },
     };
     mutate(data);
+    setIsLoading(true);
     router.push('checkout/success');
   };
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger disabled={isLoading}>
         <div className="py-2 rounded-sm bg-blue-500 text-white font-bold">
           Pilih Pembayaran
         </div>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="w-1/4">
         <DialogHeader>
           <DialogTitle>Pilih Metode Pembayaran</DialogTitle>
         </DialogHeader>
@@ -62,14 +66,14 @@ export const ModalPayment = () => {
             <label>
               <div
                 className={`flex p-3 rounded-lg border-2 items-center justify-between w-full ${
-                  selectedPayment === 'Manual_Transfer' ? 'border-blue-500' : ''
+                  selectedPayment === 'Transfer_Manual' ? 'border-blue-500' : ''
                 }`}
               >
                 <div>Transfer Manual</div>
                 <input
                   type="radio"
-                  value="Manual_Transfer"
-                  checked={selectedPayment === 'Manual_Transfer'}
+                  value="Transfer_Manual"
+                  checked={selectedPayment === 'Transfer_Manual'}
                   onChange={handlePaymentChange}
                 />
               </div>
@@ -141,12 +145,14 @@ export const ModalPayment = () => {
             </label>
           </div>
           <button
+            disabled={isLoading}
             onClick={handlePayment}
             className="py-2 rounded-sm bg-blue-500 text-white font-bold w-full"
           >
             Bayar Sekarang
           </button>
         </div>
+        {isLoading && <LoadingPage />}
       </DialogContent>
     </Dialog>
   );

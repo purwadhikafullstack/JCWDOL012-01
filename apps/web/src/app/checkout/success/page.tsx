@@ -1,8 +1,10 @@
 'use client';
 
+import LoadingPage from '@/components/LoadingPage';
 import { NavbarPayment } from '@/components/checkout/NavbarPayment';
+import { toast } from '@/components/ui/use-toast';
 import useGetPayment from '@/hooks/useGetPayment';
-import useUpdatePayment from '@/hooks/useUpdatePayment';
+import useUpdatePayment from '@/hooks/useUploadPayment';
 import { formatExpirationDate } from '@/lib/formatExpirationDate';
 import { formatToRupiah } from '@/lib/formatToRupiah';
 import { useRouter } from 'next/navigation';
@@ -12,28 +14,42 @@ import { GiSandsOfTime } from 'react-icons/gi';
 const Success = () => {
   const router = useRouter();
   const [image, setImage] = useState<File | undefined>();
-  const { data: dataPayment, isLoading, isError } = useGetPayment();
-  const { mutate: updatePayment, isPending } = useUpdatePayment();
+  const { data: dataPayment } = useGetPayment();
+  const { mutate, isPending } = useUpdatePayment();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (dataPayment) {
       router.replace(`/checkout/success?invoice=${dataPayment?.invoice}`);
     }
-  }, [dataPayment]);
+  }, [dataPayment, router]);
 
   const handleButtonProof = async (paymentId: number) => {
-    try {
-      await updatePayment(paymentId);
-      router.push('/customer/order');
-    } catch (error) {
-      router.push('/');
-    }
+    mutate(paymentId, {
+      onSuccess: () => {
+        toast({
+          variant: 'success',
+          title: 'Bukti transfer berhasil diupload',
+        });
+        setIsLoading(true);
+        router.push(`/customer/order`);
+      },
+      onError: (res: any) => {
+        toast({
+          variant: 'destructive',
+          title: 'Pembayaran sudah kadaluarsa!',
+        });
+        setIsLoading(true);
+        router.push(`/customer/order`);
+      },
+    });
   };
+
   if (!dataPayment) return null;
   return (
     <>
       <NavbarPayment />
-      <div className=" flex items-center justify-center bg-white mt-7">
+      <div className=" flex items-center justify-center bg-white pt-10">
         <div className="flex flex-col items-center justify-center w-5/6 md:w-2/3  lg:w-1/4">
           <GiSandsOfTime className="mb-2 w-36 h-36" />
           <p className="font-semibold text-lg mb-2">Menunggu pembayaran</p>
@@ -61,7 +77,7 @@ const Success = () => {
                     <p className="text-sm font-semibold">1234567890</p>
                   </>
                 ))}
-              {dataPayment.method === 'Manual_Transfer' && (
+              {dataPayment.method === 'Transfer_Manual' && (
                 <>
                   <p className="text-base">Transfer ke</p>
                   <p className="text-sm font-semibold">Mandiri - 1234567890</p>
@@ -70,7 +86,7 @@ const Success = () => {
                 </>
               )}
             </div>
-            {dataPayment.method === 'Manual_Transfer' && (
+            {dataPayment.method === 'Transfer_Manual' && (
               <div className="flex flex-col gap-1">
                 <label htmlFor="upload">Upload Bukti Pembayaran</label>
                 <input
@@ -98,16 +114,17 @@ const Success = () => {
               Kirim Bukti Transfer
             </button>
           )}
-          <button className="w-full border-2 border-blue-500 text-blue-500 rounded-sm text-lg p-2 mb-2 font-semibold">
-            Cara Pembayaran
-          </button>
           <button
-            onClick={() => router.push('/customer/order')}
+            onClick={() => {
+              setIsLoading(true);
+              router.push(`/customer/order`);
+            }}
             className="w-full border-2 border-blue-500 text-blue-500 rounded-sm text-lg p-2 mb-8 font-semibold"
           >
             Lihat Detail Pesanan
           </button>
         </div>
+        {isLoading && <LoadingPage />}
       </div>
     </>
   );

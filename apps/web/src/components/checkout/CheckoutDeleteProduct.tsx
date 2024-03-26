@@ -14,11 +14,18 @@ export const CheckoutDeleteProduct = () => {
     <div>
       <button
         onClick={handleDeleteButton}
-        className="flex items-center p-3 border rounded-sm space-x-1"
+        className=" hidden sm:flex items-center p-2 border rounded-sm space-x-1"
       >
         <FaTrashCan className="h-4 w-4" />
         <span>Hapus Semua Produk</span>
       </button>
+      <p
+        onClick={handleDeleteButton}
+        className="flex sm:hidden items-center cursor-pointer"
+      >
+        <FaTrashCan className="h-4 w-4" />
+        <span>Hapus Semua Produk</span>
+      </p>
     </div>
   );
 };

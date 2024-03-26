@@ -5,13 +5,15 @@ import express, {
   Request,
   Response,
   NextFunction,
-  Router,
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
+import { ProductRouter } from './routers/product.router';
+import { InventoryRouter } from './routers/inventory.router';
+import { CategoryRouter } from './routers/category.router';
+import { StoreRouter } from './routers/store.router';
 import { AuthRouter } from './routers/auth.router';
 import { CartRouter } from './routers/cart.router';
-import { ProductRouter } from './routers/product.router';
 import { AddressRouter } from './routers/address.router';
 import { ShipmentRouter } from './routers/shipment.router';
 import { VoucherRouter } from './routers/voucher.router';
@@ -19,6 +21,7 @@ import { UserRouter } from './routers/user.router';
 import { TestingRouter } from './routers/testing.router';
 import { TransactionRouter } from './routers/transaction.router';
 import { PaymentRouter } from './routers/payment.router';
+import { OrderRouter } from './routers/order.router';
 
 export default class App {
   private app: Express;
@@ -34,6 +37,7 @@ export default class App {
     this.app.use(cors());
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
+    this.app.use(express.static('public'));
   }
 
   private handleError(): void {
@@ -61,8 +65,11 @@ export default class App {
 
   private routes(): void {
     const authRouter = new AuthRouter();
-    const cartRouter = new CartRouter();
+    const inventoryRouter = new InventoryRouter();
+    const storeRouter = new StoreRouter();
     const productRouter = new ProductRouter();
+    const categoryRouter = new CategoryRouter();
+    const cartRouter = new CartRouter();
     const addressRouter = new AddressRouter();
     const shipmentRouter = new ShipmentRouter();
     const voucherRouter = new VoucherRouter();
@@ -70,11 +77,18 @@ export default class App {
     const testingRouter = new TestingRouter();
     const transactionRouter = new TransactionRouter();
     const paymentRouter = new PaymentRouter();
+    const orderRouter = new OrderRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
+    const authController = new AuthRouter();
 
+    this.app.use('/api/store', inventoryRouter.getRouter());
+    this.app.use('/api/store', storeRouter.getRouter());
+    this.app.use('/api/products', productRouter.getRouter());
+    this.app.use('/api/categories', categoryRouter.getRouter());
+    this.app.use('/auth', authController.getRouter());
     this.app.use(express.static('public'));
     this.app.use('/api/products', productRouter.getRouter());
     this.app.use('/api/auth', authRouter.getRouter());
@@ -86,6 +100,7 @@ export default class App {
     this.app.use('/api/testing', testingRouter.getRouter());
     this.app.use('/api/transaction', transactionRouter.getRouter());
     this.app.use('/api/payment', paymentRouter.getRouter());
+    this.app.use('/api/order', orderRouter.getRouter());
   }
 
   public start(): void {

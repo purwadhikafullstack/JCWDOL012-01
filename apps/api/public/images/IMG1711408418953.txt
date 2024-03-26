@@ -1,0 +1,44 @@
+pertanyaan transaksi
+0.membuat no order custom (inv-0001)
+1. ketika pesanan dkirim tanggal shipped at itu disimpan di tabel apa(ditabel shipment)
+2. kapan diberi peringatan harus ada alamat (ektika masuk halaman checkout)
+
+isi body dari FE 
+
+{
+  "orderDetails": {
+    "products": [
+      {
+        "productId": 123,
+        "quantity": 2,
+        "unitPrice": 50,
+        "totalPrice": 100
+      },
+      {
+        "productId": 456,
+        "quantity": 1,
+        "unitPrice": 30,
+        "totalPrice": 30
+      }
+    ],
+    "total": 130,
+    "voucherId": 789
+  },
+  "shipmentDetails": {
+    "userAddressId": 123,
+    "storeId": 456,
+    "shippingCost": 10,
+    "shipmentType": "OKE"
+  },
+  "paymentDetails": {
+    "method": "Payment_Gateway"
+  }
+}
+
+3.metode mengumpulkan data order,
+apakah dibuat satu2 contextnya atau dibuatkan satu context state dataorder yang isinya objek isi data order
+4.otomatis setelah 1 jam maka jadi cancel, itu best practicenya biasanya gmna implementasinya (sql feature job)
+5.pembatasan pembuatan order itu tujuannay buat apa (bot jaga2 transaksi + masih ada transaksi yang berlangsung )
+6.data bank disimpan di db (fe doang)
+7.midtrans sudah kasih limit waktu
+8.voucher merubah harga

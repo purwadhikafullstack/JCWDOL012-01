@@ -30,7 +30,7 @@ export const ModalAddress = () => {
         setSelectedAddress(primaryAddresses[0]);
       }
     }
-  }, [dataAddress]);
+  }, [dataAddress, isError, isLoading]);
 
   const handleAddressSelect = (address: UserAddress) => {
     setSelectedAddress(address);
@@ -43,18 +43,18 @@ export const ModalAddress = () => {
 
   return (
     <Dialog>
-      <DialogTrigger className="">
-        <div className="border px-5 py-1 text-black flex justify-between items-center rounded-md bg-white">
-          <div className="flex gap-1">
-            <FaLocationDot className="h-4 w-4" />
-            <span className="text-sm">
+      <DialogTrigger className="w-full">
+        <div className="lg:border px-5 py-2 text-black flex justify-between items-center rounded-xl lg:rounded-md bg-white">
+          <div className="flex items-center gap-1">
+            <FaLocationDot className="h-3 w-3" />
+            <span className="text-[13px]">
               Dikirim ke: {selectedAddress?.label},{selectedAddress?.city}
             </span>
           </div>
           <FaAngleDown className="h-4 w-4" />
         </div>
       </DialogTrigger>
-      <DialogContent className="w-[80vh]">
+      <DialogContent className=" w-[75vh] lg:w-[80vh]">
         <DialogHeader>
           <DialogTitle>Pilih alamat pengiriman</DialogTitle>
         </DialogHeader>

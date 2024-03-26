@@ -1,9 +1,11 @@
 'use client';
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
+import { useDialog } from '@/hooks/useDialog';
 
 import useGetCart from '@/hooks/useGetCart';
 import { useCart } from '@/provider/CartProvider';
+import { useUser } from '@/provider/UserProvider';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useCookies } from 'next-client-cookies';
@@ -22,8 +24,9 @@ interface Product {
 
 export default function Home() {
   const cookies = useCookies();
+  const { onOpenLogin, onOpenRegister } = useDialog();
+  const { setUser, user } = useUser();
   const [product, setProduct] = useState<Product[] | null>(null);
-
   const { data, isLoading, error } = useQuery<Product[]>({
     queryKey: ['product'],
     queryFn: async () => {
@@ -40,9 +43,10 @@ export default function Home() {
   });
   return (
     <div>
-      <Navbar />
       <div className="wrapper">
+        <button onClick={onOpenLogin}>open login</button>
         {/* <LocationComponent /> */}
+        <div>{user}</div>
         {data?.map((product) => (
           <div key={product.id}>
             <Link href={`/products/1/${product.id}`}>

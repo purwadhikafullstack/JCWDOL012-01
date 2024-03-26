@@ -9,8 +9,6 @@ export interface CheckoutContextType {
   paymentMethod: PaymentMethod;
   totalPrice: number;
   addOrderItems: (item: CartItem[]) => void;
-  removeOrderItem: (index: number) => void;
-  clearOrderItems: () => void;
   applyVoucher: (voucherId: string) => void;
   setShippingDetails: (details: ShippingDetails) => void;
   selectPaymentMethod: (method: PaymentMethod) => void;

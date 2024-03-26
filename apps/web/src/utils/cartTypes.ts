@@ -16,14 +16,11 @@ export interface CreateCartData {
   store_id: string;
 }
 
-export interface CountCart {
-  quantity: number;
-}
-
 export interface CartContextType {
   cart: CartItem[];
+  totalCart: number;
   isLoading: boolean;
   isError: boolean;
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
-  refetchCart: () => void;
+  refetch: () => void;
 }

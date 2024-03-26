@@ -1,7 +1,7 @@
 import { useCheckout } from '@/hooks/useCheckout';
 import useGetAddress from '@/hooks/useGetAddress';
-import useGetVoucher from '@/hooks/useGetVoucher';
 import { formatToRupiah } from '@/lib/formatToRupiah';
+import { useCart } from '@/provider/CartProvider';
 import { Dispatch, SetStateAction } from 'react';
 
 interface CheckoutTotalProps {
@@ -15,6 +15,7 @@ export const CheckoutTotal: React.FC<CheckoutTotalProps> = ({
 }) => {
   const { totalPrice } = useCheckout();
   const { data: dataAddress, isLoading, isError } = useGetAddress();
+  const { totalCart } = useCart();
 
   const handleNextStep = () => {
     if (dataAddress) {
@@ -26,7 +27,7 @@ export const CheckoutTotal: React.FC<CheckoutTotalProps> = ({
     <div className="border p-5 flex flex-col gap-5 rounded-md bg-white">
       <div className="flex justify-between text-gray-400">
         <span className="text-sm">Total Harga Pesanan</span>
-        <span className="text-sm">{formatToRupiah(totalPrice)}</span>
+        <span className="text-sm">{formatToRupiah(totalCart)}</span>
       </div>
       <div className=" border-gray-400 border" />
       <div className="flex justify-between text-red-400">

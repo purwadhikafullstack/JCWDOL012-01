@@ -44,28 +44,35 @@ export class ShipmentController {
         const nearestStoreId =
           nearestStores.length > 0 ? nearestStores[0].id : null;
 
-        const shipment = await axios.post(
-          'https://api.rajaongkir.com/starter/cost',
-          {
-            origin: nearestStoreCityId,
-            destination: address.cityId,
-            weight: 1000,
-            courier: 'jne',
-          },
-          {
-            headers: {
-              key: process.env.RAJAONGKIR_API_KEY,
-              'content-type': 'application/json',
+        // Array untuk menyimpan hasil estimasi biaya pengiriman dari setiap kurir
+        const shipment = [];
+
+        // Panggil API RajaOngkir untuk setiap kurir yang diinginkan
+        const couriers = ['jne', 'tiki'];
+        for (const courier of couriers) {
+          const response = await axios.post(
+            'https://api.rajaongkir.com/starter/cost',
+            {
+              origin: nearestStoreCityId,
+              destination: address.cityId,
+              weight: 1000,
+              courier: courier,
             },
-          },
-        );
-        const results = shipment.data.rajaongkir.results;
-        const shippingCost = results.map((result: any) => result.costs);
+            {
+              headers: {
+                key: process.env.RAJAONGKIR_API_KEY,
+                'content-type': 'application/json',
+              },
+            },
+          );
+          const results = response.data.rajaongkir.results;
+          shipment.push({ courier, ...results[0] });
+        }
 
         return res.status(200).send({
-          shippingCost,
-          addressId: address.id, // Menyertakan addressId
-          storeId: nearestStoreId, // Menyertakan storeId
+          shipment,
+          addressId: address.id,
+          storeId: nearestStoreId,
         });
       } else {
         throw new Error('cannot get Address');

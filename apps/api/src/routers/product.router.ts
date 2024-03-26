@@ -1,5 +1,4 @@
 import { ProductController } from '@/controllers/product.controller';
-import { verifyToken } from '@/middleware/verifyJwt';
 import { Router } from 'express';
 
 export class ProductRouter {

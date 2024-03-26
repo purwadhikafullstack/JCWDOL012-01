@@ -10,9 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Upload {
+  id    Int    @id @default(autoincrement())
+  title String
+  image String
+}
+
 model Test {
   id     Int        @id @default(autoincrement())
-  title  String
+  title  String     @unique
   status testStatus @default(pending)
 }
 
@@ -55,8 +61,8 @@ model User_Address {
   city      String
   cityId    Int
   province  String
-  latitude  Decimal
-  longitude Decimal
+  latitude  Float
+  longitude Float
   isPrimary Boolean
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -71,8 +77,8 @@ model Store {
   city                String
   province            String
   cityId              Int
-  latitude            Decimal
-  longitude           Decimal
+  latitude            Float
+  longitude           Float
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
   user                User                @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -85,12 +91,13 @@ model Store {
 model Product {
   id                  Int                 @id @default(autoincrement())
   name                String              @unique
-  description         String
-  category_id         Int
+  description         String              @db.Text
+  category_id         Int?
   price               Decimal
+  weight              Decimal
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
-  category            Product_Category    @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category            Product_Category?   @relation(fields: [category_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   product_inventories Product_Inventory[]
   vouchers            Voucher[]
   carts               Cart[]
@@ -122,8 +129,8 @@ model Product_Inventory {
   quantity   Int
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  store      Store      @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  product    Product    @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  store      Store      @relation(fields: [store_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  product    Product    @relation(fields: [product_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   stocklogs  Stocklog[]
 }
 
@@ -216,24 +223,28 @@ model Shipment {
 }
 
 model Payment {
-  id         Int            @id @default(autoincrement())
-  invoice    String
-  user_id    Int
-  order_id   Int
-  total      Decimal
-  method     Payment_Method
-  status     Payment_Status
-  expired_at DateTime
-  shipped_at DateTime?
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
-  order      Orders         @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user       User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id            Int            @id @default(autoincrement())
+  invoice       String
+  user_id       Int
+  order_id      Int
+  total         Decimal
+  method        Payment_Method
+  status        Payment_Status
+  proof_payment String?
+  expired_at    DateTime
+  shipped_at    DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  order         Orders         @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user          User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum Payment_Method {
-  Payment_Gateway
-  Manual_Transfer
+  BCA_Virtual
+  BNI_Virtual
+  BRI_Virtual
+  CIMB_Virtual
+  Transfer_Manual
 }
 
 enum Payment_Status {
@@ -245,9 +256,9 @@ enum Payment_Status {
 
 enum Order_Status {
   pending
-  Confirmation
-  On_process
-  Shipped
-  Confirmed
-  Cancelled
+  confirmation
+  on_process
+  shipped
+  confirmed
+  cancelled
 }

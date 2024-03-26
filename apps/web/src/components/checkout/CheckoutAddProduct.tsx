@@ -7,11 +7,18 @@ export const CheckoutAddProduct = () => {
     <div>
       <button
         onClick={() => router.push('/')}
-        className="flex items-center p-3 border rounded-sm space-x-1"
+        className="hidden lg:flex items-center p-2 border rounded-sm space-x-1"
       >
         <FaPlus className="h-4 w-4" />
         <span>Tambah Pesanan Lagi</span>
       </button>
+      <p
+        onClick={() => router.push('/')}
+        className="flex sm:hidden items-center cursor-pointer"
+      >
+        <FaPlus className="h-4 w-4" />
+        <span>Tambah Pesanan Lagi</span>
+      </p>
     </div>
   );
 };
