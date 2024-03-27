@@ -10,6 +10,7 @@ import { UserProvider } from '@/provider/userProvider';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import DialogRegister from '@/components/DialogRegister';
+import DialogLogin from '@/components/DialogLogin';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
               <CartProvider>
                 <ApplicationWrapper>
                   <Header />
+                  <DialogLogin />
                   <DialogRegister />
                   {children}
                   <Footer />

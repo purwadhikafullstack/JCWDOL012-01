@@ -23,5 +23,5 @@ export const useDialog = create<DialogProps>((set) => ({
   onCloseLogin: () => set({ isOpenLogin: false }),
   data: {},
   setData: (data) => set({ data: { data } }),
-  setIsProps: () => set({ isProps: true }),
+  setIsProps: () => set((state) => ({ isProps: !state.isProps })),
 }));
