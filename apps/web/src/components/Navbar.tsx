@@ -55,12 +55,10 @@ const Navbar = () => {
             </a>
 
             <Button type="button" onClick={onOpenLogin} variant="link">
-              <DialogLogin />
               Login
             </Button>
 
             <Button type="button" onClick={onOpenRegister} variant="link">
-              <DialogRegister />
               Sign Up
             </Button>
           </div>

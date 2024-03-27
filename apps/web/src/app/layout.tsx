@@ -9,6 +9,7 @@ import { CartProvider } from '@/provider/CartProvider';
 import { UserProvider } from '@/provider/userProvider';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import DialogRegister from '@/components/DialogRegister';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,20 +26,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <UserProvider>
-        <CookiesProvider>
-          <QueryProvider>
-            <CartProvider>
-              <ApplicationWrapper>
-              <Header />
-                {children}
-                <Footer />
-                <Toaster />
-              </ApplicationWrapper>
-            </CartProvider>
-          </QueryProvider>
-        </CookiesProvider>
-      </UserProvider>
+        <UserProvider>
+          <CookiesProvider>
+            <QueryProvider>
+              <CartProvider>
+                <ApplicationWrapper>
+                  <Header />
+                  <DialogRegister />
+                  {children}
+                  <Footer />
+                  <Toaster />
+                </ApplicationWrapper>
+              </CartProvider>
+            </QueryProvider>
+          </CookiesProvider>
+        </UserProvider>
       </body>
     </html>
   );
