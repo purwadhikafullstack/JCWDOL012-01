@@ -33,7 +33,7 @@ const SessionProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export default SessionProvider;
 
-export const useSession = (): SessionContextType => {
+export const useLogin = (): SessionContextType => {
   const context = useContext(SessionContext);
   if (!context) {
     throw new Error('useSession must be used within a SessionProvider');

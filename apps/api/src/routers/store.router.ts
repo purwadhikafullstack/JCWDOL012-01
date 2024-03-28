@@ -1,5 +1,5 @@
-import { StoreController } from "@/controllers/store.controller";
-import { Router } from "express";
+import { StoreController } from '@/controllers/store.controller';
+import { Router } from 'express';
 
 export class StoreRouter {
   private router: Router;
@@ -13,6 +13,7 @@ export class StoreRouter {
 
   private initializeRoutes() {
     this.router.get('/find-nearest', this.storeController.getNearestStore);
+    this.router.get('/', this.storeController.getAllStores);
   }
 
   getRouter() {

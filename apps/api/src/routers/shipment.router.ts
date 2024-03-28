@@ -1,5 +1,5 @@
 import { ShipmentController } from '@/controllers/shipment.controller';
-import { verifyToken } from '@/middleware/verifyJWT';
+import { verifyToken } from '@/middleware/verifyJwt';
 import { Router } from 'express';
 
 export class ShipmentRouter {

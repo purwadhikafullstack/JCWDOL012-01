@@ -21,7 +21,7 @@ export class AuthController {
 
       const jwtToken = sign(
         { id: user?.id, role: user?.role, email: user?.email },
-        'secretkey',
+        process.env.JWT_SECRET as string,
       );
 
       return res.status(200).send({

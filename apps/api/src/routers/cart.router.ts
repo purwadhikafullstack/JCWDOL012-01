@@ -1,5 +1,5 @@
 import { CartController } from '@/controllers/cart.controller';
-import { verifyToken } from '@/middleware/verifyJWT';
+import { verifyToken } from '@/middleware/verifyJwt';
 
 import { Router } from 'express';
 

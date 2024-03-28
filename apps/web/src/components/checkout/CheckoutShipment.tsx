@@ -21,7 +21,6 @@ export const CheckoutShipment: React.FC<CheckoutShipmentProps> = ({
   const { data: dataShipment, isLoading: loadingShipment } = useGetShipment();
   const { data: dataAddress, isLoading: loadingAddress } = useGetAddress();
   const { cart: dataCart } = useCart();
-  const { data: dataUser } = useGetUser();
   const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(
     null,
   );
@@ -57,7 +56,7 @@ export const CheckoutShipment: React.FC<CheckoutShipmentProps> = ({
                   {selectedAddress?.label}
                 </div>
                 <div className="text-sm">
-                  {dataUser?.user_name} ({dataUser?.telephone})
+                  {selectedAddress?.name} ({selectedAddress?.phone})
                 </div>
                 <div className="text-sm">
                   {selectedAddress?.street} , {selectedAddress?.city}{' '}

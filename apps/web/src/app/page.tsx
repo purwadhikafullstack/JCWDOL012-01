@@ -44,14 +44,6 @@ export default function Home() {
     <div>
       <div className="wrapper">
         <button onClick={onOpenLogin}>open login</button>
-        {/* <LocationComponent /> */}
-        {data?.map((product) => (
-          <div key={product.id}>
-            <Link href={`/products/1/${product.id}`}>
-              <div>{product.name}</div>
-            </Link>
-          </div>
-        ))}
       </div>
     </div>
   );

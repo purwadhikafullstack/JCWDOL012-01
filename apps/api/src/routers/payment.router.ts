@@ -2,7 +2,7 @@ import { PaymentController } from '@/controllers/payment.controller';
 import { proofPayment } from '@/middleware/proofPayment';
 import { uploader } from '@/middleware/uploader';
 import { proofPaymentValidator } from '@/middleware/validator';
-import { verifyToken } from '@/middleware/verifyJWT';
+import { verifyToken } from '@/middleware/verifyJwt';
 import { Router } from 'express';
 
 export class PaymentRouter {
@@ -23,6 +23,7 @@ export class PaymentRouter {
       proofPayment('IMG', '/images').single('file'),
       this.paymentController.UploadProofPayment,
     );
+    this.router.post('/midtrans-webhook', this.paymentController.webhook);
   }
 
   getRouter(): Router {

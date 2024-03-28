@@ -1,5 +1,7 @@
 import { UserController } from '@/controllers/user.controller';
-import { verifyToken } from '@/middleware/verifyJWT';
+import { verifyStoreAdmin } from '@/middleware/verifyAdminStore';
+import { verifyToken } from '@/middleware/verifyJwt';
+import { verifySuperAdmin } from '@/middleware/verifySuperAdmin';
 import { Router } from 'express';
 
 export class UserRouter {
@@ -7,16 +9,39 @@ export class UserRouter {
   private userController: UserController;
 
   constructor() {
-    this.userController = new UserController();
     this.router = Router();
+    this.userController = new UserController();
     this.initializeRoutes();
   }
 
-  private initializeRoutes(): void {
-    this.router.get('/', verifyToken, this.userController.getUserbyId);
+  private initializeRoutes() {
+    this.router.get(
+      '/',
+      verifyToken,
+      verifySuperAdmin,
+      this.userController.getAllUsers,
+    );
+    this.router.get(
+      '/:id',
+      verifyToken,
+      verifyStoreAdmin,
+      this.userController.getUserById,
+    );
+    this.router.put(
+      '/:id',
+      verifyToken,
+      verifySuperAdmin,
+      this.userController.updateUser,
+    );
+    this.router.delete(
+      '/:id',
+      verifyToken,
+      verifySuperAdmin,
+      this.userController.deleteUser,
+    );
   }
 
-  getRouter(): Router {
+  getRouter() {
     return this.router;
   }
 }

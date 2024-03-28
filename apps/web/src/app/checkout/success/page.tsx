@@ -7,6 +7,7 @@ import useGetPayment from '@/hooks/useGetPayment';
 import useUpdatePayment from '@/hooks/useUploadPayment';
 import { formatExpirationDate } from '@/lib/formatExpirationDate';
 import { formatToRupiah } from '@/lib/formatToRupiah';
+import { imageSchema } from '@/lib/validation';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { GiSandsOfTime } from 'react-icons/gi';
@@ -16,6 +17,7 @@ const Success = () => {
   const [image, setImage] = useState<File | undefined>();
   const { data: dataPayment } = useGetPayment();
   const { mutate, isPending } = useUpdatePayment();
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -25,24 +27,30 @@ const Success = () => {
   }, [dataPayment, router]);
 
   const handleButtonProof = async (paymentId: number) => {
-    mutate(paymentId, {
-      onSuccess: () => {
-        toast({
-          variant: 'success',
-          title: 'Bukti transfer berhasil diupload',
-        });
-        setIsLoading(true);
-        router.push(`/customer/order`);
-      },
-      onError: (res: any) => {
-        toast({
-          variant: 'destructive',
-          title: 'Pembayaran sudah kadaluarsa!',
-        });
-        setIsLoading(true);
-        router.push(`/customer/order`);
-      },
-    });
+    try {
+      await imageSchema.validate(image);
+      mutate(
+        { paymentId, file: image },
+        {
+          onSuccess: () => {
+            toast({
+              variant: 'success',
+              title: 'Bukti transfer berhasil diupload',
+            });
+            setIsLoading(true);
+            window.location.reload();
+          },
+          onError: () => {
+            toast({
+              variant: 'destructive',
+              title: 'Pembayaran sudah kadaluarsa!',
+            });
+          },
+        },
+      );
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
 
   if (!dataPayment) return null;
@@ -69,14 +77,16 @@ const Success = () => {
               <p className="text-sm font-semibold">{dataPayment.method}</p>
             </div>
             <div className="flex flex-col gap-1">
-              {dataPayment.method === 'va_mandiri' ||
-                dataPayment.method === 'va_bca' ||
-                (dataPayment.method === 'va_bri' && (
-                  <>
-                    <p className="text-base">Kode Pembayaran</p>
-                    <p className="text-sm font-semibold">1234567890</p>
-                  </>
-                ))}
+              {dataPayment.method === 'Virtual_Account' && (
+                <>
+                  <p className="text-base">Bank</p>
+                  <p className="text-sm font-semibold">{dataPayment.bank}</p>
+                  <p className="text-base">Kode Pembayaran</p>
+                  <p className="text-sm font-semibold">
+                    {dataPayment.va_number}
+                  </p>
+                </>
+              )}
               {dataPayment.method === 'Transfer_Manual' && (
                 <>
                   <p className="text-base">Transfer ke</p>
@@ -99,6 +109,7 @@ const Success = () => {
                 />
               </div>
             )}
+            {error && <p className="text-red-500">{error}</p>}
             <div className="flex flex-col gap-1">
               <p className="text-base">Sebesar</p>
               <p className="text-sm font-semibold">

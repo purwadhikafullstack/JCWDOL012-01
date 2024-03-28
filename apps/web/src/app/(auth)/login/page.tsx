@@ -3,34 +3,28 @@ import axios from 'axios';
 import React, { useEffect } from 'react';
 import { useCookies } from 'next-client-cookies';
 import { useRouter } from 'next/navigation';
-import { useSession } from '@/provider/SessionProvider';
-import useGetCart from '@/hooks/useGetCart';
-import { useCart } from '@/provider/CartProvider';
+import { useLogin } from '@/provider/SessionProvider';
+import useSession from '@/hooks/useSession';
 
 const Login = () => {
   const router = useRouter();
   const cookies = useCookies();
-  // const { refetch } = useGetCart();
-  const { isUserLoggedIn, setIsUserLoggedIn } = useSession();
-
-  // useEffect(() => {
-  //   if (isUserLoggedIn) {
-  //     refetch();
-  //   }
-  // }, [isUserLoggedIn]);
+  const { isUserLoggedIn, setIsUserLoggedIn } = useLogin();
+  const { setSessionCookie } = useSession();
 
   const handleLogin = async () => {
     try {
       const response = await axios.post(
         'http://localhost:8000/api/auth/login',
         {
-          email: 'example@mail',
+          email: 'super@mail',
         },
       );
       const { token } = response.data;
       cookies.set('token', token);
       setIsUserLoggedIn(true);
       router.push('/');
+      setSessionCookie('Super_Admin');
       console.log(token);
     } catch (error) {
       console.error('error login', error);

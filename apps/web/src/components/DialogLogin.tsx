@@ -14,7 +14,7 @@ import { Label } from './ui/label';
 import useGetCart from '@/hooks/useGetCart';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { useSession } from '@/provider/SessionProvider';
+import { useLogin } from '@/provider/SessionProvider';
 import { useCookies } from 'next-client-cookies';
 
 export default function DialogLogin() {
@@ -22,7 +22,7 @@ export default function DialogLogin() {
   const { onOpenRegister } = useDialog();
   const cookies = useCookies();
   const { refetch } = useGetCart();
-  const { isUserLoggedIn, setIsUserLoggedIn } = useSession();
+  const { isUserLoggedIn, setIsUserLoggedIn } = useLogin();
 
   useEffect(() => {
     if (isUserLoggedIn) {

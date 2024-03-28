@@ -10,8 +10,8 @@ export class TesController {
       const requestData = {
         payment_type: 'bank_transfer',
         transaction_details: {
-          order_id: 'order-3',
-          gross_amount: 44000,
+          order_id: '72',
+          gross_amount: 720000,
         },
         bank_transfer: {
           bank: 'bca',
@@ -36,7 +36,7 @@ export class TesController {
 
       await prisma.test.create({
         data: {
-          title: `order-3`,
+          title: `72`,
           status: 'pending',
         },
       });
@@ -51,9 +51,7 @@ export class TesController {
     try {
       const { order_id, transaction_status } = req.body;
 
-      // Cek apakah status transaksi adalah "settlement"
       if (transaction_status === 'settlement') {
-        // Jika status transaksi "settlement", perbarui status di tabel Test menjadi "confirmation"
         await prisma.test.update({
           where: {
             title: order_id,
@@ -65,7 +63,6 @@ export class TesController {
 
         res.status(200).json({ message: 'Test status updated successfully' });
       } else {
-        // Jika status transaksi bukan "settlement", kembalikan respon dengan pesan yang sesuai
         res
           .status(400)
           .json({ message: 'Transaction status is not settlement' });

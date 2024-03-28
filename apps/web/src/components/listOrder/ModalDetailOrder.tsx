@@ -8,8 +8,11 @@ import {
 import { formatToRupiah } from '@/lib/formatToRupiah';
 import Image from 'next/image';
 import { PaymentGuideModal } from './PaymentGuideModal';
+import { useState } from 'react';
+import { ModalCancelOrder } from './ModalCancelOrder';
 
 export const ModalDetailOrder = ({ order }: { order: any }) => {
+  const [cancelModal, setCancelModal] = useState(false);
   let totalBelanja = 0;
   order.order_Items.forEach((item: any) => {
     totalBelanja += Number(item.product.price) * item.quantity;
@@ -56,8 +59,20 @@ export const ModalDetailOrder = ({ order }: { order: any }) => {
             {order.status === 'pending' && (
               <div className="flex flex-col gap-1">
                 <PaymentGuideModal order={order} />
-                <button className="border border-red-500 text-red-500 p-2 rounded-sm">
+                <button
+                  onClick={() => {
+                    setCancelModal(true);
+                  }}
+                  className="border border-red-500 text-red-500 p-2 rounded-sm"
+                >
                   Batalkan Pesanan
+                </button>
+              </div>
+            )}
+            {order.status === 'shipped' && (
+              <div className="flex flex-col gap-1">
+                <button className="border border-blue-500 text-blue-500 p-2 rounded-sm">
+                  Pesanan Diterima
                 </button>
               </div>
             )}
@@ -126,6 +141,7 @@ export const ModalDetailOrder = ({ order }: { order: any }) => {
             </div>
           </div>
         </div>
+        <ModalCancelOrder setCancel={setCancelModal} cancel={cancelModal} />
       </DialogContent>
     </Dialog>
   );

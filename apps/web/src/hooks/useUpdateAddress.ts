@@ -28,7 +28,6 @@ const useUpdateAddress = () => {
         return res.data;
       } catch (error) {
         console.error(`Error updating address`, error);
-        throw error; // Melempar kembali error untuk menangani di komponen yang menggunakan hook ini
       }
     },
   });

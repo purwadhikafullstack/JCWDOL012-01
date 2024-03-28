@@ -12,12 +12,9 @@ export const ListAddress = ({
   selectedAddress,
   handleAddressSelect,
 }: Props) => {
-  const { data, isLoading, isError } = useGetUser();
   return (
     <label>
       <div className="relative">
-        {' '}
-        {/* Menambahkan relative positioning */}
         <div
           className={`border-2 p-2 flex justify-between text-base rounded-md ${
             userAddress.id === selectedAddress?.id ? 'border-blue-500' : ''
@@ -29,8 +26,8 @@ export const ListAddress = ({
               <span className="font-semibold">{userAddress.label}</span>
             </p>
             <p className="flex gap-1">
-              <span className="font-semibold">{data?.user_name}</span>
-              {data?.telephone}
+              <span className="font-semibold">{userAddress.name}</span>
+              {userAddress.phone}
             </p>
             <p>
               {userAddress.street},{userAddress.city}

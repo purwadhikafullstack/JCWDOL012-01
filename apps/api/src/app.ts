@@ -22,6 +22,7 @@ import { TestingRouter } from './routers/testing.router';
 import { TransactionRouter } from './routers/transaction.router';
 import { PaymentRouter } from './routers/payment.router';
 import { OrderRouter } from './routers/order.router';
+import { ImageRouter } from './routers/image.router';
 
 export default class App {
   private app: Express;
@@ -78,29 +79,32 @@ export default class App {
     const transactionRouter = new TransactionRouter();
     const paymentRouter = new PaymentRouter();
     const orderRouter = new OrderRouter();
+    const imageRouter = new ImageRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
     const authController = new AuthRouter();
 
+    this.app.use(express.static('public'));
+
     this.app.use('/api/store', inventoryRouter.getRouter());
     this.app.use('/api/store', storeRouter.getRouter());
     this.app.use('/api/products', productRouter.getRouter());
     this.app.use('/api/categories', categoryRouter.getRouter());
     this.app.use('/auth', authController.getRouter());
-    this.app.use(express.static('public'));
     this.app.use('/api/products', productRouter.getRouter());
     this.app.use('/api/auth', authRouter.getRouter());
     this.app.use('/api/cart', cartRouter.getRouter());
     this.app.use('/api/address', addressRouter.getRouter());
     this.app.use('/api/shipment', shipmentRouter.getRouter());
     this.app.use('/api/voucher', voucherRouter.getRouter());
-    this.app.use('/api/user', userRouter.getRouter());
+    this.app.use('/api/users', userRouter.getRouter());
     this.app.use('/api/testing', testingRouter.getRouter());
     this.app.use('/api/transaction', transactionRouter.getRouter());
     this.app.use('/api/payment', paymentRouter.getRouter());
     this.app.use('/api/order', orderRouter.getRouter());
+    this.app.use('/image', imageRouter.getRouter());
   }
 
   public start(): void {

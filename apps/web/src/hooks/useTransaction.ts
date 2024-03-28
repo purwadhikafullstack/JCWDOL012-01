@@ -1,15 +1,11 @@
-import { CreateCartData } from '@/utils/cartTypes';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { error } from 'console';
 import { useCookies } from 'next-client-cookies';
-import { useState } from 'react';
 
 const useTransaction = () => {
   const queryClient = useQueryClient();
   const cookies = useCookies();
   const token = cookies.get('token');
-  const [errorMessage, setErrorMessage] = useState('');
 
   const { mutate, isPending } = useMutation({
     mutationKey: ['transaction'],
@@ -33,7 +29,10 @@ const useTransaction = () => {
         total: number;
         voucherId: string | null;
       };
-      paymentDetails: { method: string };
+      paymentDetails: {
+        method: string;
+        bank: string;
+      };
       shipmentDetails: {
         address_id: number;
         amount: number;
@@ -60,21 +59,13 @@ const useTransaction = () => {
         );
         queryClient.invalidateQueries({ queryKey: ['cart'] });
         return res.data;
-      } catch (error: any) {
-        console.error(error);
-        const errorMessageFromAPI = error.response?.data?.error;
-        if (errorMessageFromAPI === 'Stok kosong') {
-          setErrorMessage('Stok Barang Tidak Tersedia');
-        } else if (errorMessageFromAPI === 'Stok tidak mencukupi') {
-          setErrorMessage('Stok Barang Tidak Mencukupi');
-        } else {
-          setErrorMessage('terjadi kesalahan');
-        }
+      } catch (error) {
+        console.error(`Error create transaction`, error);
       }
     },
   });
 
-  return { mutate, isPending, errorMessage };
+  return { mutate, isPending };
 };
 
 export default useTransaction;

@@ -6,23 +6,26 @@ const OrderPage = ({
   searchParams?: {
     invoice?: string;
     status?: string;
-    date?: string;
+    start_date?: string;
+    end_date?: string;
     page?: string;
   };
 }) => {
   const currentPage = Number(searchParams?.page) || 1;
   const invoice = searchParams?.invoice || '';
   const status = searchParams?.status || '';
-  const date = searchParams?.date || '';
+  const startDate = searchParams?.start_date || '';
+  const endDate = searchParams?.end_date || '';
 
   return (
-    <div className=" bg-white flex flex-col p-5 gap-3 mt-8 w-full rounded-md h-fit">
+    <div className=" bg-white flex flex-col p-5 gap-3 mt-5 w-full rounded-md h-fit">
       <p className="text-2xl font-semibold">Daftar Transaksi</p>
       <UserOrder
         invoice={invoice}
         currentPage={currentPage}
         status={status}
-        date={date}
+        startDate={startDate}
+        endDate={endDate}
       />
     </div>
   );

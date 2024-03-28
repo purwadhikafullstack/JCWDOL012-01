@@ -57,6 +57,8 @@ model User_Address {
   id        Int        @id @default(autoincrement())
   user_id   Int
   label     String
+  name      String
+  phone     String
   street    String
   city      String
   cityId    Int
@@ -137,6 +139,7 @@ model Product_Inventory {
 model Stocklog {
   id           Int               @id @default(autoincrement())
   inventory_id Int
+  quantity     Int
   typeLog      StockLogType
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
@@ -224,10 +227,12 @@ model Shipment {
 
 model Payment {
   id            Int            @id @default(autoincrement())
-  invoice       String
+  invoice       String         @unique
   user_id       Int
   order_id      Int            @unique
   total         Decimal
+  bank          String?
+  va_number     String?
   method        Payment_Method
   status        Payment_Status
   proof_payment String?
@@ -240,10 +245,7 @@ model Payment {
 }
 
 enum Payment_Method {
-  BCA_Virtual
-  BNI_Virtual
-  BRI_Virtual
-  CIMB_Virtual
+  Virtual_Account
   Transfer_Manual
 }
 

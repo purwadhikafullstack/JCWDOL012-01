@@ -9,22 +9,23 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '@/components/ui/sheet';
-import { useSession } from '@/provider/SessionProvider';
+
 import { useDialog } from '@/hooks/useDialog';
-import DialogForm from '../DialogRegister';
-import DialogLogin from '../DialogLogin';
 import { useState } from 'react';
+import { useCookies } from 'next-client-cookies';
+import { useLogin } from '@/provider/SessionProvider';
 
 export const CartButton = () => {
-  const { isUserLoggedIn } = useSession();
+  const { isUserLoggedIn } = useLogin();
   const { onOpenLogin } = useDialog();
   const { cart, totalCart } = useCart();
   const [isOpen, setIsOpen] = useState(false);
+  const cookies = useCookies();
+  const token = cookies.get('token');
 
   const handleSheetTrigger = () => {
-    if (!isUserLoggedIn) {
+    if (!token) {
       onOpenLogin();
       return setIsOpen(false);
     }
@@ -49,7 +50,7 @@ export const CartButton = () => {
             </div>
           ))}
       </div>
-      {isUserLoggedIn && (
+      {token && (
         <SheetContent style={{ overflowY: 'auto' }}>
           <SheetHeader>
             <SheetTitle>Keranjang</SheetTitle>

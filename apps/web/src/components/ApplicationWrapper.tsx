@@ -4,8 +4,9 @@ import { usePathname } from 'next/navigation';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import SideNavbar from './SideNavbar';
-import { Navbar } from './Navbar';
+
 import SideNavbarUser from './SideNavbarUser';
+import Navbar from './Navbar';
 
 export default function ApplicationWrapper({
   children,
@@ -45,8 +46,8 @@ export default function ApplicationWrapper({
 
   return (
     <>
-      <Header />
-      {children}
+      <Navbar />
+      <div className="relative h-auto w-full bg-gray-100 ">{children}</div>
       <Footer />
     </>
   );

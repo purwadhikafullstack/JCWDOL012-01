@@ -4,13 +4,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
-import useGetPayment from '@/hooks/useGetPayment';
 import useUpdatePayment from '@/hooks/useUploadPayment';
 import { formatToRupiah } from '@/lib/formatToRupiah';
 import { toast } from '../ui/use-toast';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import LoadingPage from '../LoadingPage';
 import { imageSchema } from '@/lib/validation';
 
@@ -73,14 +70,18 @@ export const PaymentGuideModal = ({ order }: { order: any }) => {
               <p className="text-sm font-semibold">{order.payment[0].method}</p>
             </div>
             <div className="flex flex-col gap-1">
-              {order.payment[0].method === 'va_mandiri' ||
-                order.payment[0].method === 'va_bca' ||
-                (order.payment[0].method === 'va_bri' && (
-                  <>
-                    <p className="text-base">Kode Pembayaran:</p>
-                    <p className="text-sm font-semibold">1234567890</p>
-                  </>
-                ))}
+              {order.payment[0].method === 'Virtual_Account' && (
+                <>
+                  <p className="text-base">Bank</p>
+                  <p className="text-sm font-semibold">
+                    {order.payment[0].bank}
+                  </p>
+                  <p className="text-base">Kode Pembayaran</p>
+                  <p className="text-sm font-semibold">
+                    {order.payment[0].va_number}
+                  </p>
+                </>
+              )}
               {order.payment[0].method === 'Transfer_Manual' && (
                 <>
                   <p className="text-base">Transfer ke:</p>
@@ -113,17 +114,19 @@ export const PaymentGuideModal = ({ order }: { order: any }) => {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => handleButtonProof(order.payment[0].id)}
-            className={`w-full border-2 text-lg p-2 mb-2 font-semibold rounded-sm ${
-              image
-                ? 'border-blue-500 text-blue-500'
-                : 'border-gray-500 text-gray-500 cursor-not-allowed'
-            }`}
-            disabled={!image || isPending}
-          >
-            Kirim Bukti Transfer
-          </button>
+          {order.payment[0].method === 'Transfer_Manual' && (
+            <button
+              onClick={() => handleButtonProof(order.payment[0].id)}
+              className={`w-full border-2 text-lg p-2 mb-2 font-semibold rounded-sm ${
+                image
+                  ? 'border-blue-500 text-blue-500'
+                  : 'border-gray-500 text-gray-500 cursor-not-allowed'
+              }`}
+              disabled={!image || isPending}
+            >
+              Kirim Bukti Transfer
+            </button>
+          )}
         </div>
         {isLoading && <LoadingPage />}
       </DialogContent>

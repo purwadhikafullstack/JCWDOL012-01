@@ -12,12 +12,14 @@ const UserOrder = ({
   invoice,
   currentPage,
   status,
-  date,
+  startDate,
+  endDate,
 }: {
   invoice: string;
   currentPage: number;
   status: string;
-  date: string;
+  startDate: string;
+  endDate: string;
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -26,7 +28,8 @@ const UserOrder = ({
     status: status,
     page: currentPage,
     invoice: invoice,
-    date: date,
+    start_date: startDate,
+    end_date: endDate,
   });
 
   const handleSearch = useDebouncedCallback((term: string) => {
@@ -38,7 +41,7 @@ const UserOrder = ({
       params.delete('invoice');
     }
     router.replace(`${pathname}?${params.toString()}`);
-  }, 1000);
+  }, 2000);
 
   return (
     <div className="relative bg-white flex flex-col gap-3">

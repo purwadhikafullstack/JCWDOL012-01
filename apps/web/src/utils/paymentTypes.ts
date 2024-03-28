@@ -1,8 +1,4 @@
-export type PaymentMethod =
-  | 'Transfer_Manual'
-  | 'va_mandiri'
-  | 'va_bca'
-  | 'va_bri';
+export type PaymentMethod = 'Transfer_Manual' | 'Virtual_Account';
 
 export interface Payment {
   id: number;
@@ -11,6 +7,8 @@ export interface Payment {
   order_id: number;
   total: string;
   method: string;
+  bank: string;
+  va_number: string;
   status: string;
   expired_at: string;
   shipped_at: string;

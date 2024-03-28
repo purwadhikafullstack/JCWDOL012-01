@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '@/prisma';
 import mysql from 'mysql2';
+import axios from 'axios';
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -120,8 +121,62 @@ export class TransactionController {
         });
 
         let payment;
-        if (paymentDetails.method === 'Payment_Gateway') {
-          // Proses pembayaran melalui gateway pembayaran
+        if (paymentDetails.method === 'Virtual_Account') {
+          const now = new Date();
+          const formattedDate = now
+            .toISOString()
+            .slice(0, 10)
+            .replace(/-/g, '');
+          const invoiceNumber = `INV-${formattedDate}-${order.id}`;
+          const requestData = {
+            payment_type: 'bank_transfer',
+            transaction_details: {
+              order_id: invoiceNumber,
+              gross_amount: total,
+            },
+            bank_transfer: {
+              bank: paymentDetails.bank,
+            },
+          };
+          const authHeader = `Basic ${Buffer.from(
+            'SB-Mid-server-Ro1-xtuXIa1sQyztcpMN0Uec',
+          ).toString('base64')}`;
+
+          try {
+            const response = await axios.post(
+              'https://api.sandbox.midtrans.com/v2/charge',
+              requestData,
+              {
+                headers: {
+                  Accept: 'application/json',
+                  Authorization: authHeader,
+                  'Content-Type': 'application/json',
+                },
+              },
+            );
+
+            const midtrans = response.data;
+            const inputDate = midtrans.expiry_time;
+            const [datePart, timePart] = inputDate.split(' ');
+            const expired_at = `${datePart}T${timePart}Z`;
+
+            payment = await tx.payment.create({
+              data: {
+                invoice: invoiceNumber,
+                user_id: dataUser.id,
+                order_id: order.id,
+                total: total,
+                status: 'pending',
+                method: paymentDetails.method,
+                expired_at,
+                bank: midtrans.va_numbers[0].bank,
+                va_number: midtrans.va_numbers[0].va_number,
+              },
+            });
+          } catch (error) {
+            console.error('Error posting payment request:', error);
+            throw new Error('Failed to post payment request');
+          }
         } else {
           const now = new Date();
           const formattedDate = now
@@ -175,6 +230,7 @@ export class TransactionController {
               data: {
                 inventory_id: inventory.id,
                 typeLog: 'Reduction',
+                quantity: product.quantity,
               },
             });
           } else {
@@ -196,55 +252,59 @@ export class TransactionController {
       const newOrderId = transaction.order.id;
       const newPaymentId = transaction.payment ? transaction.payment.id : null;
 
-      const createEventQuery = `
-      CREATE EVENT change_status_event_${newOrderId}
-      ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 10 SECOND
-      DO
-      BEGIN
-          -- Mengubah status pesanan menjadi 'Cancelled' jika masih 'Pending'
-          UPDATE orders 
-          SET status = 'cancelled' 
-          WHERE status = 'pending' AND id = ${newOrderId};
+      if (paymentDetails.method === 'Transfer_Manual') {
+        const createEventQuery = `
+          CREATE EVENT change_status_event_${newOrderId}
+          ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 20 SECOND
+          DO
+          BEGIN
+              -- Mengubah status pesanan menjadi 'Cancelled' jika masih 'Pending'
+              UPDATE orders 
+              SET status = 'cancelled' 
+              WHERE status = 'pending' AND id = ${newOrderId};
+    
+              -- Mengubah status pembayaran menjadi 'Cancelled' jika masih 'Pending'
+              UPDATE payment 
+              SET status = 'Cancelled' 
+              WHERE status = 'Pending' AND id = ${newPaymentId};
+    
+              -- Pengecekan status pesanan sebelum membuat entri log stok
+              IF (SELECT status FROM orders WHERE id = ${newOrderId}) = 'Cancelled' THEN
+                    -- Mengembalikan quantity pada product_inventory jika pesanan dibatalkan
+                    UPDATE product_inventory AS pi
+                    SET pi.quantity = pi.quantity + (
+                      SELECT SUM(oi.quantity) 
+                      FROM order_item AS oi
+                      WHERE oi.product_id = pi.product_id
+                      AND oi.store_id = ${shipmentDetails.store_id}
+                      AND oi.order_id = ${newOrderId}
+                    )
+                    WHERE pi.product_id IN (
+                      SELECT DISTINCT oi.product_id 
+                      FROM order_item AS oi
+                      WHERE oi.order_id = ${newOrderId}
+                    );
+                  -- Buat entri log stok
+                  INSERT INTO stocklog (inventory_id, typeLog,quantity, updatedAt)
+                  SELECT pi.id, 'Addition',oi.quantity, NOW()
+                  FROM product_inventory AS pi
+                  WHERE pi.product_id IN (${orderDetails.products
+                    .map(
+                      (product: { product_id: number }) => product.product_id,
+                    )
+                    .join(',')}) 
+                  AND pi.store_id = ${shipmentDetails.store_id};
+              END IF;
+          END;`;
 
-          -- Mengubah status pembayaran menjadi 'Cancelled' jika masih 'Pending'
-          UPDATE payment 
-          SET status = 'Cancelled' 
-          WHERE status = 'Pending' AND id = ${newPaymentId};
-
-          -- Pengecekan status pesanan sebelum membuat entri log stok
-          IF (SELECT status FROM orders WHERE id = ${newOrderId}) = 'Cancelled' THEN
-                -- Mengembalikan quantity pada product_inventory jika pesanan dibatalkan
-                UPDATE product_inventory AS pi
-                SET pi.quantity = pi.quantity + (
-                  SELECT SUM(oi.quantity) 
-                  FROM order_item AS oi
-                  WHERE oi.product_id = pi.product_id
-                  AND oi.store_id = ${shipmentDetails.store_id}
-                  AND oi.order_id = ${newOrderId}
-                )
-                WHERE pi.product_id IN (
-                  SELECT DISTINCT oi.product_id 
-                  FROM order_item AS oi
-                  WHERE oi.order_id = ${newOrderId}
-                );
-              -- Buat entri log stok
-              INSERT INTO stocklog (inventory_id, typeLog, updatedAt)
-              SELECT pi.id, 'Addition', NOW()
-              FROM product_inventory AS pi
-              WHERE pi.product_id IN (${orderDetails.products
-                .map((product: { product_id: number }) => product.product_id)
-                .join(',')}) 
-              AND pi.store_id = ${shipmentDetails.store_id};
-          END IF;
-      END;`;
-
-      connection.query(createEventQuery, (err) => {
-        if (err) {
-          console.error('Error creating event scheduler:', err);
-          return res.status(500).json({ error: 'Internal server error' });
-        }
-        console.log('Event scheduler created successfully');
-      });
+        connection.query(createEventQuery, (err) => {
+          if (err) {
+            console.error('Error creating event scheduler:', err);
+            return res.status(500).json({ error: 'Internal server error' });
+          }
+          console.log('Event scheduler created successfully');
+        });
+      }
 
       return res.status(200).json(transaction);
     } catch (error) {

@@ -1,22 +1,15 @@
-'use client';
-
-import { useState } from 'react';
-import { Nav } from './ui/nav';
-
 import { UsersRound, Tag, Ticket } from 'lucide-react';
+import { NavUser } from './ui/navUser';
 
 type Props = {};
 const SideNavbarUser = (props: Props) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
   return (
-    <div className="hidden lg:relative lg:flex min-w-[80px] w-52 pb-10 pt-6">
-      <Nav
-        isCollapsed={isCollapsed}
+    <div className="hidden lg:relative lg:flex min-w-[80px] w-64 pt-4 pb-10 ">
+      <NavUser
         links={[
           {
             title: 'Informasi Akun',
-            href: '#',
+            href: '/customer/account',
             icon: UsersRound,
             variant: 'default',
           },

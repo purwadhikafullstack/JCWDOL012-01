@@ -19,7 +19,7 @@ export const verifyToken = async (
     if (!token) {
       return res.status(400).send('Token not found');
     }
-    const verifiedToken: any = verify(token, 'secretkey');
+    const verifiedToken: any = verify(token, process.env.JWT_SECRET as string);
 
     req.dataUser = verifiedToken;
     next();

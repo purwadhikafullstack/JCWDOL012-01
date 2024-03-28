@@ -10,12 +10,12 @@ import useTransaction from '@/hooks/useTransaction';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import useGetShipment from '@/hooks/useGetShipment';
 import LoadingPage from '../LoadingPage';
 
 export const ModalPayment = () => {
   const router = useRouter();
   const [selectedPayment, setSelectedPayment] = useState('Transfer_Manual');
+  const [bank, setBank] = useState('');
   const { mutate } = useTransaction();
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -29,7 +29,16 @@ export const ModalPayment = () => {
 
   const handlePaymentChange = (event: any) => {
     setSelectedPayment(event.target.value);
-    selectPaymentMethod(event.target.value);
+    if (event.target.value === 'BCA Virtual Account') {
+      selectPaymentMethod('Virtual_Account');
+      setBank('bca');
+    } else if (event.target.value === 'BRI Virtual Account') {
+      selectPaymentMethod('Virtual_Account');
+      setBank('bri');
+    } else if (event.target.value === 'BNI Virtual Account') {
+      selectPaymentMethod('Virtual_Account');
+      setBank('bni');
+    } else selectPaymentMethod(event.target.value);
   };
 
   const handlePayment = async () => {
@@ -40,8 +49,12 @@ export const ModalPayment = () => {
         voucherId: voucher,
       },
       shipmentDetails: shipment,
-      paymentDetails: { method: paymentMethod },
+      paymentDetails: {
+        method: paymentMethod,
+        bank: bank,
+      },
     };
+    console.log(data);
     mutate(data);
     setIsLoading(true);
     router.push('checkout/success');
@@ -60,7 +73,7 @@ export const ModalPayment = () => {
         <div className="flex flex-col gap-3 items-center">
           <div className="flex p-3 rounded-lg text-blue-700 bg-blue-100 items-center justify-between w-full">
             <p>Total Pembayaran:</p>
-            <p className="font-semibold">Rp. 7.900</p>
+            <p className="font-semibold">Rp {totalPrice}</p>
           </div>
           <div className="flex flex-col gap-3 w-full">
             <label>
@@ -133,12 +146,12 @@ export const ModalPayment = () => {
                     width={50}
                     height={50}
                   />
-                  |<div>Mandiri Virtual Account </div>
+                  |<div>BNI Virtual Account </div>
                 </div>
                 <input
                   type="radio"
-                  value="Mandiri Virtual Account"
-                  checked={selectedPayment === 'Mandiri Virtual Account'}
+                  value="BNI Virtual Account"
+                  checked={selectedPayment === 'BNI Virtual Account'}
                   onChange={handlePaymentChange}
                 />
               </div>

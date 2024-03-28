@@ -1,7 +1,7 @@
 import { AddressController } from '@/controllers/address.controller';
 import { OrderController } from '@/controllers/order.controller';
 
-import { verifyToken } from '@/middleware/verifyJWT';
+import { verifyToken } from '@/middleware/verifyJwt';
 import { Router } from 'express';
 
 export class OrderRouter {
@@ -16,10 +16,20 @@ export class OrderRouter {
 
   private initializeRoutes(): void {
     this.router.get('/', verifyToken, this.orderController.getOrder);
+    this.router.get(
+      '/:orderId',
+      verifyToken,
+      this.orderController.getOrderById,
+    );
     this.router.patch(
       '/:orderId/cancel',
       verifyToken,
       this.orderController.cancelOrder,
+    );
+    this.router.patch(
+      '/:orderId/confirmed',
+      verifyToken,
+      this.orderController.orderRecieve,
     );
   }
 
